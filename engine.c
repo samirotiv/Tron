@@ -25,6 +25,7 @@ void engineInit(){
 
 /*TODO: SCREEN SIZE CHECKING*/
     
+    /* SETTING I/O OPTIONS */
     raw();                          //Immediately record keystroke & don't interpret control characters
     noecho();                       //Disable Echo
     keypad(stdscr, TRUE);           //Enable input of control keys
