@@ -56,9 +56,6 @@ void engineInit(){
 
 
 void engineDrawWalls(){
-    erase();
-    refresh();
-    
     int y;
     for (y=0; y<SCREENHEIGHT; y++){
         engineAddChar (0, y, WALL);
@@ -79,6 +76,20 @@ void engineDrawWalls(){
 
     refresh();
     return;
+}
+
+
+
+void engineClearMap(){
+    erase();
+    refresh();    
+
+    int i, j;
+    for (i=0; i<SCREENWIDTH; i++){
+        for (j=0; j<SCREENHEIGHT; j++){
+            game.map[i][j] = 0;
+        }
+    }
 }
         
     
