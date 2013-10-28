@@ -13,6 +13,15 @@ FILE: snake.h
 #define LEFT -1
 #define RIGHT 1
 
+#define SNAKE1_STARTX 5
+#define SNAKE2_STARTX 75
+#define SNAKE1_STARTY 12
+#define SNAKE2_STARTY 12
+#define SNAKE1_DIRECTION RIGHT
+#define SNAKE2_DIRECTION LEFT
+#define SNAKE1_MARKER 1
+#define SNAKE2_MARKER 2
+
 struct point {
     int x;
     int y;
@@ -35,8 +44,8 @@ struct snakestructure {
 };
 
 
-extern struct snakestructure player;
-extern struct snakestructure bot;
+extern struct snakestructure snake1;
+extern struct snakestructure snake2;
 
 
 
