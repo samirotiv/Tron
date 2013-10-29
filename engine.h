@@ -16,7 +16,7 @@ FILE: engine.h
 
 #define WALL 'W'
 #define SNAKEHEAD '@'
-#define SNAKEBODY '*'
+#define SNAKEBODY '#'
 
 
 //#####################________________-----UNIVERSAL GAME STRUCTURE------__________________####################
@@ -29,6 +29,8 @@ struct gamestructure {
     char map[SCREENWIDTH][SCREENHEIGHT];
 };
 
+#define GAMEDELAY 200000
+
 extern struct gamestructure game;
 
 
@@ -36,7 +38,8 @@ extern struct gamestructure game;
 //..################_________---FUNCTION DECLARATIONS---_________###############
 void engineInit();
 void engineDrawWalls();
-
+void engineClearMap();
+void engineStartGameEnvironment();
 
 
 
@@ -48,3 +51,21 @@ void engineDrawWalls();
 #define engineAddCharFromPoint(m_point, m_symbol) mvaddch(m_point.y, m_point.x, m_symbol)
 
 #endif
+
+
+
+
+
+//.###___Queue Library___###
+#define MAXQUEUESIZE 10
+
+typedef struct queue_ {
+    int data[MAXQUEUESIZE];
+    int head;
+    int tail;
+    int size;
+} queue;
+
+void InitQueue (queue* q);
+void enqueue (queue* q, int val);
+int dequeue (queue* q);

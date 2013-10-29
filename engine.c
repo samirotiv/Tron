@@ -10,7 +10,6 @@ FILE: engine.c
 #include <curses.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "engine.h"
 
 struct gamestructure game;
@@ -37,17 +36,16 @@ void engineInit(){
         endwin();
         printf ("Your console screen is smaller than 80x24\nPlease resize your window and try again\n\n");
         exit(0);
-        }
+    }
     
-    /* SETTING I/O OPTIONS */
+    /* SETTING UNIVERSAL I/O OPTIONS */
     raw();                          //Immediately record keystroke & don't interpret control characters
     noecho();                       //Disable Echo
     keypad(stdscr, TRUE);           //Enable input of control keys
     curs_set(0);                    //Disable cursor
     
-    //STRICTLY TEMPORARY - TESTING ONLY
-    //nodelay(stdscr, TRUE);          //Disable waiting for user input
-    nodelay(stdscr, FALSE);          //Enable waiting for user input
+    //KEY DELAY: PROGRAM STATE DEPENDENT
+    nodelay(stdscr, TRUE);          //Disable waiting for user input
     
     refresh();                      //First refresh of screen
 
@@ -55,7 +53,27 @@ void engineInit(){
 
 
 
+
+void engineStartGameEnvironment(){
+    nodelay(stdscr, TRUE);
+    engineClearMap();
+    engineDrawWalls();
+    snakeInit();
+
+    refresh();
+    flushinp();
+
+    return;
+}
+
+
+
+
 void engineDrawWalls(){
+    //Clear screen
+    erase();
+
+    //Draw vertical walls
     int y;
     for (y=0; y<SCREENHEIGHT; y++){
         engineAddChar (0, y, WALL);
@@ -65,6 +83,7 @@ void engineDrawWalls(){
         game.map[SCREENWIDTH-1][y] = WALL;
     }
 
+    //Draw horizontal walls
     int x;
     for (x=0; x<SCREENWIDTH; x++){
         engineAddChar (x, 0, WALL);
@@ -74,16 +93,12 @@ void engineDrawWalls(){
         game.map[x][SCREENHEIGHT-1] = WALL;
     }
 
-    refresh();
     return;
 }
 
 
 
 void engineClearMap(){
-    erase();
-    refresh();    
-
     int i, j;
     for (i=0; i<SCREENWIDTH; i++){
         for (j=0; j<SCREENHEIGHT; j++){
@@ -93,4 +108,28 @@ void engineClearMap(){
 }
         
     
-    
+ 
+
+
+//..######-----BASIC QUEUE LIBRARY: FOR RESPONSIVE INPUT IN 2 PLAYER GAMES-----######
+void InitQueue (queue* q){
+    q->size = q->head = q->tail = 0;
+}
+
+void enqueue (queue* q, int val){
+    if ((q->size == 0) || (q->tail != q->head)){
+        q->size++;
+        q->data[q->tail] = val;
+        q->tail = (q->tail + 1) % MAXQUEUESIZE;
+    }
+}
+
+int dequeue (queue* q){
+    if (q->size > 0){
+        q->size--;
+        int returnvalue = q->data[q->head];
+        q->head = (q->head + 1) % MAXQUEUESIZE;
+        return returnvalue;
+    }
+    else return 0;
+}
