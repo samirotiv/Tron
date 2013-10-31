@@ -41,40 +41,43 @@ void TwoPlayerGame(){
     InitQueue(&player1buffer);
     InitQueue(&player2buffer);
     
+    player1buffer.lastenqueued = SNAKE1_STARTDIRECTION;
+    player2buffer.lastenqueued = SNAKE2_STARTDIRECTION;
+    
     while((snake1.alive == 1) && (snake2.alive == 1)){
         usleep (GAMEDELAY);
         while ((c = getch()) != ERR){
             switch (c){
                 case KEY_UP:
-                    enqueue (&player2buffer, UP);
+                    if (player2buffer.lastenqueued != UP) enqueue (&player2buffer, UP);
                     break;
 
                 case KEY_LEFT:
-                    enqueue (&player2buffer, LEFT);
+                    if (player2buffer.lastenqueued != LEFT) enqueue (&player2buffer, LEFT);
                     break;
 
                 case KEY_DOWN:
-                    enqueue (&player2buffer, DOWN);
+                    if (player2buffer.lastenqueued != DOWN) enqueue (&player2buffer, DOWN);
                     break;
 
                 case KEY_RIGHT:
-                    enqueue (&player2buffer, RIGHT);
+                    if (player2buffer.lastenqueued != RIGHT) enqueue (&player2buffer, RIGHT);
                     break;
 
                 case 'w': case 'W':
-				    enqueue (&player1buffer, UP);
+				    if (player2buffer.lastenqueued != UP) enqueue (&player1buffer, UP);
 				    break;
 
 			    case 'a': case 'A':
-				    enqueue (&player1buffer, LEFT);
+				    if (player2buffer.lastenqueued != LEFT) enqueue (&player1buffer, LEFT);
 				    break;
 
 			    case 's': case 'S':
-				    enqueue (&player1buffer, DOWN);
+				    if (player2buffer.lastenqueued != DOWN) enqueue (&player1buffer, DOWN);
 				    break;
 
 			    case 'd': case 'D':
-				    enqueue (&player1buffer, RIGHT);
+				    if (player2buffer.lastenqueued != RIGHT) enqueue (&player1buffer, RIGHT);
 				    break;
 
                 case 'q':	case 'Q':

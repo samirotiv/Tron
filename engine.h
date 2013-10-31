@@ -61,8 +61,9 @@ void engineStartGameEnvironment();
 
 typedef struct queue_ {
     int data[MAXQUEUESIZE];
-    int head;
-    int tail;
+    int front;
+    int behindback;
+    int lastenqueued;
     int size;
 } queue;
 

@@ -113,22 +113,23 @@ void engineClearMap(){
 
 //..######-----BASIC QUEUE LIBRARY: FOR RESPONSIVE INPUT IN 2 PLAYER GAMES-----######
 void InitQueue (queue* q){
-    q->size = q->head = q->tail = 0;
+    q->size = q->front = q->behindback = 0;
 }
 
 void enqueue (queue* q, int val){
-    if ((q->size == 0) || (q->tail != q->head)){
+    if ((q->size == 0) || (q->behindback != q->front)){
         q->size++;
-        q->data[q->tail] = val;
-        q->tail = (q->tail + 1) % MAXQUEUESIZE;
+        q->data[q->behindback] = val;
+        q->lastenqueued = val;
+        q->behindback = (q->behindback + 1) % MAXQUEUESIZE;
     }
 }
 
 int dequeue (queue* q){
     if (q->size > 0){
         q->size--;
-        int returnvalue = q->data[q->head];
-        q->head = (q->head + 1) % MAXQUEUESIZE;
+        int returnvalue = q->data[q->front];
+        q->front = (q->front + 1) % MAXQUEUESIZE;
         return returnvalue;
     }
     else return 0;

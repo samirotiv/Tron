@@ -28,8 +28,8 @@ void snakeInit(){
     game.map[snake1.head.x][snake1.head.y] = snake1.marker;
     game.map[snake2.head.x][snake2.head.y] = snake2.marker;
 
-    snake1.direction = SNAKE1_DIRECTION;
-    snake2.direction = SNAKE2_DIRECTION;
+    snake1.direction = SNAKE1_STARTDIRECTION;
+    snake2.direction = SNAKE2_STARTDIRECTION;
     
     engineAddCharFromPoint (snake1.head, SNAKEHEAD);
     engineAddCharFromPoint (snake2.head, SNAKEHEAD);
