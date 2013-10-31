@@ -65,19 +65,19 @@ void TwoPlayerGame(){
                     break;
 
                 case 'w': case 'W':
-				    if (player2buffer.lastenqueued != UP) enqueue (&player1buffer, UP);
+				    if (player1buffer.lastenqueued != UP) enqueue (&player1buffer, UP);
 				    break;
 
 			    case 'a': case 'A':
-				    if (player2buffer.lastenqueued != LEFT) enqueue (&player1buffer, LEFT);
+				    if (player1buffer.lastenqueued != LEFT) enqueue (&player1buffer, LEFT);
 				    break;
 
 			    case 's': case 'S':
-				    if (player2buffer.lastenqueued != DOWN) enqueue (&player1buffer, DOWN);
+				    if (player1buffer.lastenqueued != DOWN) enqueue (&player1buffer, DOWN);
 				    break;
 
 			    case 'd': case 'D':
-				    if (player2buffer.lastenqueued != RIGHT) enqueue (&player1buffer, RIGHT);
+				    if (player1buffer.lastenqueued != RIGHT) enqueue (&player1buffer, RIGHT);
 				    break;
 
                 case 'q':	case 'Q':

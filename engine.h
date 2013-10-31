@@ -50,8 +50,8 @@ void engineStartGameEnvironment();
 
 //..################_________---ENGINE MACROS---_________###############
 //Add character
-#define engineAddChar (m_x, m_y, m_char)  mvaddch  (m_y, m_x, m_char)
-#define engineAddStr  (m_x, m_y, m_str)   mvaddstr (m_y, m_x, m_str)
+#define engineAddChar(m_x, m_y, m_char)  mvaddch  (m_y, m_x, m_char)
+#define engineAddStr(m_x, m_y, m_str)    mvaddstr (m_y, m_x, m_str)
 
 //Add point
 #define engineAddCharFromPoint(m_point, m_symbol) mvaddch(m_point.y, m_point.x, m_symbol)
