@@ -67,6 +67,16 @@ void engineStartGameEnvironment(){
 }
 
 
+void engineStartMenuEnvironment(){
+    nodelay(stdscr, FALSE);
+
+    refresh();
+    flushinp();
+
+    return;
+}
+
+
 
 
 void engineDrawWalls(){

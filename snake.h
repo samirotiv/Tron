@@ -13,7 +13,7 @@ FILE: snake.h
 #define LEFT -1
 #define RIGHT 1
 
-#define SNAKE1_STARTX 5
+#define SNAKE1_STARTX 4
 #define SNAKE2_STARTX 75
 #define SNAKE1_STARTY 12
 #define SNAKE2_STARTY 12
@@ -21,6 +21,8 @@ FILE: snake.h
 #define SNAKE2_STARTDIRECTION LEFT
 #define SNAKE1_MARKER 1
 #define SNAKE2_MARKER 2
+
+#define MAXSNAKESIZE 1000
 
 struct point {
     int x;
@@ -35,7 +37,7 @@ struct snakestructure {
     char alive;
     
     struct point head;
-    struct point position[10000]; //Insurance
+    struct point position[MAXSNAKESIZE]; //Insurance
 
     int direction;
     int size;
@@ -55,7 +57,6 @@ void snakeInit();
 
 
 //..################_________---SNAKE MACROS---_________###############
-//TODO: TAKE CARE OF GOING OUT OF BOUNDARY
 
 //Update direction of snake
 #define snakeUpdateDirection(macro_snake, macro_direction)  if (macro_snake.direction + macro_direction != 0) {macro_snake.direction = macro_direction;}
