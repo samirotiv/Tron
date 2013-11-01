@@ -108,7 +108,7 @@ void TwoPlayerGame(){
     }
     
     //POST GAME PROCESSING
-
+    engineProcessGameWinner();
 }
 
 
@@ -161,6 +161,7 @@ void SinglePlayerGame(){
     }
     
     //POST GAME PROCESSING
+    engineProcessGameWinner();
 
 }
 

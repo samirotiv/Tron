@@ -70,6 +70,7 @@ void engineStartGameEnvironment(){
 void engineStartMenuEnvironment(){
     nodelay(stdscr, FALSE);
 
+    erase();
     refresh();
     flushinp();
 
@@ -116,7 +117,18 @@ void engineClearMap(){
         }
     }
 }
-        
+
+
+void engineProcessGameWinner(){
+    //Handle the special case of head-to-head collisions
+    if ((snake1.head.x == snake2.head.x) && (snake1.head.y == snake2.head.y)) snake1.alive = snake2.alive = 0;
+
+    //Now declare the winner
+    if (snake1.alive != 0) game.winner = 1;
+    else if (snake2.alive != 0) game.winner = 2;
+    else game.winner = 0;
+}
+
     
  
 

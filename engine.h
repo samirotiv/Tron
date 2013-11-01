@@ -45,6 +45,8 @@ void engineInit();
 void engineDrawWalls();
 void engineClearMap();
 void engineStartGameEnvironment();
+void engineStartMenuEnvironment();
+void engineProcessGameWinner();
 
 
 
