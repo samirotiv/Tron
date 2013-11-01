@@ -51,9 +51,10 @@ void engineProcessGameWinner();
 
 
 //..################_________---ENGINE MACROS---_________###############
-//Add character
+//Writing onto screen
 #define engineAddChar(m_x, m_y, m_char)  mvaddch  (m_y, m_x, m_char)
 #define engineAddStr(m_x, m_y, m_str)    mvaddstr (m_y, m_x, m_str)
+#define enginePrintF(m_x, m_y, ...)      mvprintw (m_y, m_x, __VA_ARGS__)
 
 //Add point
 #define engineAddCharFromPoint(m_point, m_symbol) mvaddch(m_point.y, m_point.x, m_symbol)

@@ -11,6 +11,7 @@ FILE: engine.c
 #include <stdio.h>
 #include <stdlib.h>
 #include "engine.h"
+#include "snake.h"
 
 struct gamestructure game;
 
