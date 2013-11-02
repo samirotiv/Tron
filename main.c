@@ -12,6 +12,7 @@ FILE: main.c
 
 #include "engine.h"
 #include "snake.h"
+#include "menu.h"
 
 
 void SinglePlayerGame();
@@ -109,6 +110,7 @@ void TwoPlayerGame(){
     
     //POST GAME PROCESSING
     engineProcessGameWinner();
+    menuEndGame();
 }
 
 
