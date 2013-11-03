@@ -7,6 +7,5 @@ FILE: ai.h
 
 */
 
-
-void aiProcessWithTimeout(struct snakestructure* botsnake, int usleep);
+void aiProcessAndSleep(struct snakestructure* botsnake, int usleep);
 void aiProcessGame(void *data);

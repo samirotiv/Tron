@@ -5,7 +5,11 @@ ______________________________________________
 
 FILE: ai.c
 
+//KILL VERSION
+
 */
+
+#define botsnake (*botsnakepointer)
 
 #include <stdlib.h>
 #include <pthread.h>
@@ -20,10 +24,8 @@ FILE: ai.c
 
 //Initializing Mutex & Condition
 pthread_mutex_t processing = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t donemutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t done = PTHREAD_COND_INITIALIZER;
 int doneflag;
-
+int newdirection;
 
 
 
@@ -34,41 +36,46 @@ FUNCTION: aiProcessGame
     direction.
     
     EXERCISE CAUTION: This thread might be killed at any time.
+    To create a block of code that executes completely, change cancel
+    type to DEFERRED and ensure that no statement is a CANCELLATION
+    POINT.
+    
+    (Refer to pthread man pages for a list of CANCELLATION POINTS)
     
 *********************************************************************
 */
-void *aiProcessGame(void *data){
-    int oldcanceltype;
-    
+void *aiProcessGame(void *data){    
     //Allow the thread to be killed at any time.
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &oldcanceltype);
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
     
     
     
     //DO OPERATIONS HERE
     //. . . . . . . . . .
-    //struct snakestructure* botsnake = (struct snakestructure*) data;
+    struct snakestructure* botsnakepointer = (struct snakestructure*) data;
+    //sleep(2);
+    int dirarr[] = {UP, DOWN, LEFT, RIGHT};
+    int i;
+    for (i=0; i<4; i++){
+        if (game.map[botsnake.head.x + (dirarr[i] % 2)][botsnake.head.y + (dirarr[i] / 2)] == 0){
+            enginePrintF (5, SCREENHEIGHT + 2, "COAST IS CLEAR");
+            botsnake.bot_newdirection = dirarr[i];
+            break;
+        }
+    }
+    
 
-/*FOR TESTING*/
-        usleep(500000);
-        enginePrintF (5, SCREENHEIGHT + 5, "Hello World :)");
-        refresh();
-        usleep(600000);
-        enginePrintF (5, SCREENHEIGHT + 11, "Should not show :)");
-        refresh();
     
-    
-    
-    //AFTER PROCESSING:
-    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &oldcanceltype);
+    //After Processing:
+    //Ensure that a cancel doesn't take place here.
+    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
     pthread_cleanup_push(pthread_mutex_unlock, (void *) &processing);
     pthread_mutex_lock(&processing);
     
     doneflag = 1;
-    pthread_cond_signal(&done);
     
     pthread_cleanup_pop(1);
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &oldcanceltype);
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
     
     return NULL;
 }
@@ -76,32 +83,28 @@ void *aiProcessGame(void *data){
 
 
 
-void aiProcessWithTimeout(struct snakestructure* botsnake, long int usleep){
-    struct timespec abs_time;
+void aiProcessAndSleep(struct snakestructure* botsnakepointer, long int usleeptime){
+    struct timespec timeout;
     pthread_t aithread;
     int error = 0;
+    void *exitstatus;
     
-    //Lock the processing mutex
-    pthread_mutex_lock(&processing);
-    
-    //Get the absolute time
-    clock_gettime(CLOCK_REALTIME, &abs_time);
-    abs_time.tv_sec += usleep / 1000000;
-    abs_time.tv_nsec += (usleep % 1000000) * 1000;
-    
+    //Set initial direction
+    botsnake.bot_newdirection = botsnake.direction;
     
     //Start the aiProcessGame thread.
     doneflag = 0;
-    pthread_create(&aithread, NULL, aiProcessGame, botsnake);
+    pthread_create(&aithread, NULL, aiProcessGame, botsnakepointer);
     
-    //Handle spurious returns
-    //while (error == 0 || doneflag == 1) 
-    error = pthread_cond_timedwait(&done, &processing, &abs_time);
+    timeout.tv_sec = usleeptime / 1000000;
+    timeout.tv_nsec = (usleeptime % 1000000) * 1000;
+    nanosleep(&timeout, NULL);
     
-    //Handling after timeout
-//FOR TESTING
-    //if (error == ETIMEDOUT) {pthread_cancel(aithread); enginePrintF (5, SCREENHEIGHT + 8, "TIMEOUT");}
-    if (error == ETIMEDOUT) pthread_cancel(aithread);
-    else if (error == 0) pthread_mutex_unlock(&processing);
+    
+    error = pthread_cancel(aithread);    
+    error = pthread_join(aithread, &exitstatus);
+    
+    if (doneflag == 1) {enginePrintF (5, SCREENHEIGHT + 1, "THREAD FINISHED SUCCESSFULLY");}
+    if (doneflag == 0) {enginePrintF (5, SCREENHEIGHT + 1, "THREAD ABORTED, IT SEEMS    ");}
     
 }

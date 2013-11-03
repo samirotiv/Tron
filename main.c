@@ -13,6 +13,7 @@ FILE: main.c
 #include "engine.h"
 #include "snake.h"
 #include "menu.h"
+#include "ai.h"
 
 
 void SinglePlayerGame();
@@ -26,7 +27,7 @@ void ExitGame();
 int main(){
 //STRICTLY TEMPORARY - TESTING ONLY
     engineInit();
-    TwoPlayerGame();
+    SinglePlayerGame();
 
     ExitGame();
 }
@@ -123,7 +124,7 @@ void SinglePlayerGame(){
     game.map[snake2.head.x][snake2.head.y] = 0;
     
     while((snake1.alive == 1) && (snake2.alive == 1)){
-        usleep (GAMEDELAY);
+        aiProcessAndSleep(&snake2, GAMEDELAY);
         switch (c = getch()){
             case ERR:
 				// If we get no input
@@ -157,13 +158,16 @@ void SinglePlayerGame(){
                 break;
         }
         
+        snakeUpdateDirection(snake2, snake2.bot_newdirection);
+        
         snakeElongate (snake1);
-        //snakeElongate (snake2);
+        snakeElongate (snake2);
         refresh();
     }
     
     //POST GAME PROCESSING
     engineProcessGameWinner();
+    menuEndGame();
 
 }
 

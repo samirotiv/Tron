@@ -43,6 +43,9 @@ struct snakestructure {
     int size;
     
     char marker;
+    
+    //For BOT
+    int bot_newdirection;
 };
 
 
