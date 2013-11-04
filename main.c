@@ -27,7 +27,7 @@ void ExitGame();
 int main(){
 //STRICTLY TEMPORARY - TESTING ONLY
     engineInit();
-    SinglePlayerGame();
+    menuMainMenu();
 
     ExitGame();
 }
