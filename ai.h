@@ -15,7 +15,7 @@ FILE: ai.h
 #define STRAIGHT 0
 #define RIGHTTURN 1
 #define FG futuregame
-#define DIFFICULTY 1
+#define DIFFICULTY 3
 
 extern int doneflag;
 
