@@ -108,12 +108,14 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     }
 
     //TESTING
+    /*
     fprintf(fp, "AT OUTER MINIMAX:\n");
     for (i=0; i<3; i++){
         fprintf(fp, "\tDirection=%d\tScore = %d\n", movesarray[0][i], movesarray[1][i]);
     }
     fprintf(fp, "SELECTED = Direction=%d\tScore = %d\n", movesarray[0][aiMaxOf3(movesarray[1])], movesarray[1][aiMaxOf3(movesarray[1])]);
-	
+	*/
+
     return movesarray[0][aiMaxOf3(movesarray[1])];
 }
 
@@ -152,18 +154,19 @@ int aiScore( struct future FG, int direction, int depth){
 	int negativesubscores[3];
 	for (i=0; i<4; i++){
     	if (snakeIsDirectionAllowed (FG.usr, directions[i])) {
-    		negativesubscores[i] = 0 - aiSubScore(FG, directions[i], depth + 1);
+    		negativesubscores[j] = 0 - aiSubScore(FG, directions[i], depth + 1);
     		j++;
     	}
     }
 
 
     //TESTING
+    /*
     fprintf(fp, "AT AiSCORE Depth = %d:\n", depth);
     for (i=0; i<3; i++){
         fprintf(fp, "\tSubScore = %d\n", negativesubscores[i], negativesubscores[i]);
     }
-    fprintf(fp, "SELECTED SubScore = %d\n", 0 - negativesubscores[aiMaxOf3(negativesubscores)]);
+    fprintf(fp, "SELECTED SubScore = %d\n", 0 - negativesubscores[aiMaxOf3(negativesubscores)]);*/
     
     return (0 - negativesubscores[aiMaxOf3(negativesubscores)]);
 }
@@ -198,11 +201,12 @@ int aiSubScore( struct future FG, int direction, int depth){
     
     
     //TESTING
+    /*
     fprintf(fp, "AT AiSUBSCORE Depth = %d:\n", depth);
     for (i=0; i<3; i++){
         fprintf(fp, "\tScore = %d\n", scores[i], scores[i]);
     }
-    fprintf(fp, "SELECTED Score = %d\n", scores[aiMaxOf3(scores)]);
+    fprintf(fp, "SELECTED Score = %d\n", scores[aiMaxOf3(scores)]);*/
 
     return scores[aiMaxOf3(scores)];
 }
