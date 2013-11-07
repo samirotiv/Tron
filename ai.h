@@ -7,5 +7,56 @@ FILE: ai.h
 
 */
 
-void aiProcessAndSleep(struct snakestructure* botsnake, int usleep);
-void aiProcessGame(void *data);
+#ifndef AI_DEFINED
+#define AI_DEFINED
+
+
+#define LEFTTURN -1
+#define STRAIGHT 0
+#define RIGHTTURN 1
+#define FG futuregame
+#define DIFFICULTY 1
+
+extern int doneflag;
+
+//TESTING
+extern FILE* fp;
+
+#include "engine.h"
+#include "snake.h"
+
+struct future{
+	char map[SCREENWIDTH][SCREENHEIGHT];
+	/*int botdirection;
+	struct point bothead;
+	int usrdirection;
+	struct point usrhead;*/
+	struct snakestructure bot;
+	struct snakestructure usr;
+};
+	
+
+void* aiProcessGame(void *data);
+int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer);
+int aiMaxOf3( int *);
+int aiScore( struct future futuregame, int direction, int depth);
+int aiSubScore( struct future futuregame, int direction, int depth);
+
+
+
+//Elongate snake    (WARNING: DOES NOT CHECK IF INPUT IS OUT OF RANGE)
+#define aiElongate(m_snake) {                                                            \
+                    MovePoint (m_snake.head, m_snake.direction % 2, m_snake.direction / 2); \
+                                                                                            \
+                    if (FG.map[m_snake.head.x][m_snake.head.y] != 0) {                    \
+                        m_snake.alive = 0;                                                  \
+                        }                                                                   \
+                                                                                            \
+                    FG.map[m_snake.head.x][m_snake.head.y] = m_snake.marker;             \
+                    m_snake.size++;                                                         \
+                                                                                            \
+                    EquatePoint (m_snake.position[m_snake.size - 1], m_snake.head);         \
+                }
+
+
+#endif
