@@ -27,12 +27,11 @@ extern FILE* fp;
 
 struct future{
 	char map[SCREENWIDTH][SCREENHEIGHT];
-	/*int botdirection;
-	struct point bothead;
-	int usrdirection;
-	struct point usrhead;*/
 	struct snakestructure bot;
 	struct snakestructure usr;
+    
+    int botdistancemap[SCREENWIDTH][SCREENHEIGHT];
+    int usrdistancemap[SCREENWIDTH][SCREENHEIGHT];
 };
 	
 
@@ -42,6 +41,11 @@ int aiMaxOf3( int *);
 int aiScore( struct future futuregame, int direction, int depth);
 int aiSubScore( struct future futuregame, int direction, int depth);
 
+void aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y);
+int aiVoronoi(struct future* FGptr);
+
+
+#define aiMaxOf3(m_arr) ( m_arr[2]>m_arr[((m_arr[1]>m_arr[0])?1:0)])?2:((m_arr[1]>m_arr[0])?1:0)
 
 
 //Elongate snake    (WARNING: DOES NOT CHECK IF INPUT IS OUT OF RANGE)

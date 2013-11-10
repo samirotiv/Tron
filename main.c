@@ -42,8 +42,9 @@ void TwoPlayerGame(){
     int c, new_direction;
 
     queue player1buffer, player2buffer;
-    InitQueue(&player1buffer);
-    InitQueue(&player2buffer);
+    int buffer1[MAXKEYBUFFERSIZE], buffer2[MAXKEYBUFFERSIZE];
+    InitQueue(&player1buffer, buffer1, MAXKEYBUFFERSIZE);
+    InitQueue(&player2buffer, buffer2, MAXKEYBUFFERSIZE);
     
     player1buffer.lastenqueued = SNAKE1_STARTDIRECTION;
     player2buffer.lastenqueued = SNAKE2_STARTDIRECTION;

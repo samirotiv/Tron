@@ -25,6 +25,7 @@ FILE: snake.h
 #define SNAKE1_MARKER 1
 #define SNAKE2_MARKER 2
 
+//Maxsnakesize = Half of number of squares
 #define MAXSNAKESIZE 1000
 
 struct point {

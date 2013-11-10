@@ -164,13 +164,22 @@ void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakes
     timeout.tv_nsec = (usleeptime % 1000000) * 1000;
     nanosleep(&timeout, NULL);
     
-    
-    error = pthread_cancel(aithread);    
+    //FOR TESTING ONLY
+    //DISABLED KILL FOR TESTING
+    //error = pthread_cancel(aithread);    
     error = pthread_join(aithread, &exitstatus);
     
-    if (doneflag == 1) {enginePrintF (5, SCREENHEIGHT + 1, "THREAD FINISHED SUCCESSFULLY");}
-    if (doneflag == 0) {enginePrintF (5, SCREENHEIGHT + 1, "THREAD ABORTED, IT SEEMS    ");}
+    //FOR TESTING ONLY
+    if (doneflag == 1) {
+        enginePrintF (5, SCREENHEIGHT + 1, "THREAD FINISHED SUCCESSFULLY");
+        fprintf(fp, "THREAD FINISHED SUCCESSFULLY\n");
+        }
+    if (doneflag == 0) {
+        enginePrintF (5, SCREENHEIGHT + 1, "THREAD ABORTED, IT SEEMS    ");
+        fprintf(fp, "THREAD ABORTED, IT SEEMS\n");
+        }
     
+    return;
 }
 
 
@@ -179,8 +188,15 @@ void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakes
 
 
 //..######-----BASIC QUEUE LIBRARY: FOR RESPONSIVE INPUT IN 2 PLAYER GAMES-----######
-void InitQueue (queue* q){
+void InitQueue (queue* q, int* array, int arraysize){
     q->size = q->front = q->behindback = 0;
+    q->maxqueuesize = arraysize;
+    if (array != NULL){
+        q->data = array;
+    }
+    else{
+        q->data = (int*) malloc ((q->maxqueuesize + 1) * sizeof(int));
+    }
 }
 
 void enqueue (queue* q, int val){
@@ -188,7 +204,7 @@ void enqueue (queue* q, int val){
         q->size++;
         q->data[q->behindback] = val;
         q->lastenqueued = val;
-        q->behindback = (q->behindback + 1) % MAXQUEUESIZE;
+        q->behindback = (q->behindback + 1) % q->maxqueuesize;
     }
 }
 
@@ -196,8 +212,13 @@ int dequeue (queue* q){
     if (q->size > 0){
         q->size--;
         int returnvalue = q->data[q->front];
-        q->front = (q->front + 1) % MAXQUEUESIZE;
+        q->front = (q->front + 1) % q->maxqueuesize;
         return returnvalue;
     }
     else return 0;
+}
+
+
+void FreeQueue (queue* q){
+    free(q->data);
 }

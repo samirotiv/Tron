@@ -30,7 +30,12 @@ pthread_mutex_t processing = PTHREAD_MUTEX_INITIALIZER;
 int doneflag;
 
 //Global Misc. Variables
-int directions[] = {LEFT, UP, DOWN, RIGHT};
+int directions[] = {LEFT, UP, RIGHT, DOWN};
+
+//Djikstra's Algorithm Variables
+queue dijk_unvisited_x, dijk_unvisited_y;
+int dijk_unvisited_x_arr[MAXSQUARES], dijk_unvisited_y_arr[MAXSQUARES];
+int dijk_seq[4] = {0, 0, 1, -1}; 
 
 //TESTING ONLY
 int test=1;
@@ -88,17 +93,13 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
 	//Start MINIMAX
    	struct future FG; 
 	int i, j;
-	
-	/*leftscore = 2;
-	straightscore = 10;
-	rightscore = 9;*/
         	
     memcpy (FG.map, game.map, (SCREENWIDTH * SCREENHEIGHT * sizeof(char)));
     memcpy (&(FG.bot), botsnakepointer, sizeof(struct snakestructure));
     memcpy (&(FG.usr), usrsnakepointer, sizeof(struct snakestructure));
     
-    int movesarray[2][3];
-    j = 0;
+    int movesarray[2][3];   //There are going to be 3 allowed directions
+    j = 0;  //Incremented every time an allowed direction is encountered
     for (i=0; i<4; i++){
     	if (snakeIsDirectionAllowed (FG.bot, directions[i])) {
     		movesarray[0][j] = directions[i];
@@ -108,34 +109,17 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     }
 
     //TESTING
-    /*
+    
     fprintf(fp, "AT OUTER MINIMAX:\n");
     for (i=0; i<3; i++){
         fprintf(fp, "\tDirection=%d\tScore = %d\n", movesarray[0][i], movesarray[1][i]);
     }
     fprintf(fp, "SELECTED = Direction=%d\tScore = %d\n", movesarray[0][aiMaxOf3(movesarray[1])], movesarray[1][aiMaxOf3(movesarray[1])]);
-	*/
+    
+
+	
 
     return movesarray[0][aiMaxOf3(movesarray[1])];
-}
-
-
-
-
-
-
-/*
- *Function to find the maximum of three integers
- *Returns random if integers are equal
- */
-int aiMaxOf3 (int arr[]){
-	int i,max;
-	max=arr[0];
-	if (arr[1]>=max) max=arr[1];
-    if (arr[2]>max)	max=arr[2];
-	if (max==arr[0])	return 0;
-	if (max==arr[1])	return 1;
-	if (max==arr[2])	return 2;
 }
 
 
@@ -147,7 +131,7 @@ int aiScore( struct future FG, int direction, int depth){
 	snakeUpdateDirection (FG.bot, direction);
 	aiElongate (FG.bot);
 	
-	if (FG.bot.alive == 0) return -1000;	
+	if (FG.bot.alive == 0) return -100000;	
 	
 	int i;
 	int j = 0;
@@ -178,15 +162,17 @@ int aiScore( struct future FG, int direction, int depth){
 int aiSubScore( struct future FG, int direction, int depth){
 	snakeUpdateDirection (FG.usr, direction);
 	aiElongate (FG.usr);
-	if (FG.usr.alive == 0) return 1000;	
+	if (FG.usr.alive == 0) return 100000;	
 	if (depth >= DIFFICULTY) {
+        int score = aiVoronoi(&FG);
 	    //TESTING ONLY
-	    //enginePrintF (5, SCREENHEIGHT + 7 + test, "              ");
-	    //test = 1 - test;
-        //enginePrintF (5, SCREENHEIGHT + 7 + test, "HIT DIFFICULTY");
-        //refresh();
+        //TESTING
         
-	    return 1;
+        fprintf(fp, "AT AiSUBSCORE Depth = %d: (DIFFICULTY HIT)\n", depth);
+        fprintf(fp, "VORONOI Score = %d\n", score);
+        
+        //TEMPORARY - might be changed
+	    return score;
     }
 	
 	int i;
@@ -209,4 +195,114 @@ int aiSubScore( struct future FG, int direction, int depth){
     fprintf(fp, "SELECTED Score = %d\n", scores[aiMaxOf3(scores)]);*/
 
     return scores[aiMaxOf3(scores)];
+}
+
+
+
+
+
+int aiVoronoi(struct future* FGptr){  
+    int x, y;
+    aiDijkstra(FGptr->map, FGptr->botdistancemap, FGptr->bot.head.x, FGptr->bot.head.y);
+    aiDijkstra(FGptr->map, FGptr->usrdistancemap, FGptr->usr.head.x, FGptr->usr.head.y);
+    
+    int result = 0;
+    int sign;
+    
+    for (y=0; y<SCREENHEIGHT; y++){
+        for (x=0; x<SCREENWIDTH; x++){
+            //FGptr->botdistancemap[x][y]
+            //FGptr->usrdistancemap[x][y]
+            if (FGptr->botdistancemap[x][y] != FGptr->usrdistancemap[x][y]) {
+                sign = (2 * ((FGptr->botdistancemap[x][y] > 0) && (FGptr->usrdistancemap[x][y] > 0))) - 1;
+                result += sign * (2 * (FGptr->botdistancemap[x][y] < FGptr->usrdistancemap[x][y])) - 1;
+            }
+        }
+    }
+    
+    
+    //FOR TESTING
+    /*
+    fprintf(fp, "AIVORONOI CALLED\n");    
+    for (y=0; y<SCREENHEIGHT; y++){
+        for (x=0; x<SCREENWIDTH; x++){
+            //FGptr->botdistancemap[x][y]
+            //FGptr->usrdistancemap[x][y]
+            if (FGptr->botdistancemap[x][y] != FGptr->usrdistancemap[x][y]) {
+                sign = (2 * ((FGptr->botdistancemap[x][y] > 0) && (FGptr->usrdistancemap[x][y] > 0))) - 1;
+                fprintf(fp, " %3d ", sign * (2 * (FGptr->botdistancemap[x][y] < FGptr->usrdistancemap[x][y])) - 1);
+            }
+            else fprintf(fp, " %3d ", 0);
+        }
+        fprintf(fp, "\n\n");
+    }
+    fprintf(fp, "\n\n\n\n\n\n\n\n");
+    */
+    
+    //Temporarily just returning - might save this somewhere.
+    return result;
+}
+
+
+
+//For a map of dimension SCREENWIDTH x SCREENHEIGHT, with walls as borders.
+void aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y){
+    //Note that -1 is a distance of infinity
+    int x, y;
+    int i, j, k;
+    
+    //Initialize distance to infinity
+    for (x=0; x<SCREENWIDTH; x++){
+        for (y=0; y<SCREENHEIGHT; y++){
+            distance[x][y] = -1;
+        }
+    }
+
+    //(Dijkstra declartions made global to reuse variables)
+    //Clearing queue
+    InitQueue (&dijk_unvisited_x, dijk_unvisited_x_arr, MAXSQUARES);
+    InitQueue (&dijk_unvisited_y, dijk_unvisited_y_arr, MAXSQUARES);
+    
+    enqueue (&dijk_unvisited_x, start_x);
+    enqueue (&dijk_unvisited_y, start_y);
+    distance[start_x][start_y] = 0;
+    char temp = map[start_x][start_y];
+    map[start_x][start_y] = 0;
+
+       
+    while(dijk_unvisited_x.size > 0){
+        //Pick a vertex    
+        x = dequeue (&dijk_unvisited_x);
+        y = dequeue (&dijk_unvisited_y);
+        
+
+        //Update its neighbours
+        for (k=0; k < 4; k++){
+            i = dijk_seq[k];
+            j = dijk_seq[3-k];
+            if ((map[x+i][y+j] == 0) && (distance[x+i][y+j] == -1)){
+                //When all edges have weight 1, it's impossible that an unvisited neighbour's
+                //shortest distance will be <= the current vertex's distance.
+                //So we don't need to compare it.
+                distance[x+i][y+j] = distance[x][y] + 1;
+                enqueue (&dijk_unvisited_x, x+i);
+                enqueue (&dijk_unvisited_y, y+j);
+            }
+        }
+    }
+    
+    map[start_x][start_y] = temp;
+    
+    //FOR TESTING
+    /*
+    for (y=0; y<SCREENHEIGHT; y++){
+        for (x=0; x<SCREENWIDTH; x++){
+            fprintf(fp, "%c(%3d)  ", map[x][y], distance[x][y]);
+        }
+        fprintf(fp, "\n\n");
+    }
+    fprintf(fp, "\n\n\n\n\n\n\n");
+    */
+    
+    return;
 }

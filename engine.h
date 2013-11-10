@@ -13,6 +13,8 @@ FILE: engine.h
 
 #define SCREENHEIGHT 24
 #define SCREENWIDTH 80
+//Max squares = SCRHEIGHT * SCRWIDTH
+#define MAXSQUARES 2000
 
 #define WALL 'W'
 #define SNAKEHEAD '@'
@@ -31,6 +33,7 @@ struct gamestructure {
 };
 
 #define GAMEDELAY 200000
+#define MAXKEYBUFFERSIZE 3
 
 #define PLAYER1 1
 #define PLAYER2 2
@@ -65,17 +68,20 @@ void engineProcessGameWinner();
 //.###___Queue Library___###
 #define MAXQUEUESIZE 10
 
+
 typedef struct queue_ {
-    int data[MAXQUEUESIZE];
+    int* data;
+    int maxqueuesize;
     int front;
     int behindback;
     int lastenqueued;
     int size;
 } queue;
 
-void InitQueue (queue* q);
+void InitQueue (queue* q, int* array, int arraysize);
 void enqueue (queue* q, int val);
 int dequeue (queue* q);
+void FreeQueue (queue* q);
 
 
 
