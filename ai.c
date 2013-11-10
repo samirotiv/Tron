@@ -41,6 +41,10 @@ int dijk_seq[4] = {0, 0, 1, -1};
 int test=1;
 FILE* fp;
 
+//For the Voronoi Heuristic
+int currentbotdistancemap[SCREENWIDTH][SCREENHEIGHT];
+int currentusrdistancemap[SCREENWIDTH][SCREENHEIGHT];
+
 
 
 /*
@@ -97,6 +101,10 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     memcpy (FG.map, game.map, (SCREENWIDTH * SCREENHEIGHT * sizeof(char)));
     memcpy (&(FG.bot), botsnakepointer, sizeof(struct snakestructure));
     memcpy (&(FG.usr), usrsnakepointer, sizeof(struct snakestructure));
+
+    //FOR VORONOI
+    aiDijkstra(FG.map, currentusrdistancemap, FG.usr.head.x, FG.usr.head.y);
+    aiDijkstra(FG.map, currentbotdistancemap, FG.bot.head.x, FG.bot.head.y);
     
     int movesarray[2][3];   //There are going to be 3 allowed directions
     j = 0;  //Incremented every time an allowed direction is encountered
@@ -109,13 +117,13 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     }
 
     //TESTING
-    
+    /*
     fprintf(fp, "AT OUTER MINIMAX:\n");
     for (i=0; i<3; i++){
         fprintf(fp, "\tDirection=%d\tScore = %d\n", movesarray[0][i], movesarray[1][i]);
     }
     fprintf(fp, "SELECTED = Direction=%d\tScore = %d\n", movesarray[0][aiMaxOf3(movesarray[1])], movesarray[1][aiMaxOf3(movesarray[1])]);
-    
+    */
 
 	
 
@@ -213,10 +221,15 @@ int aiVoronoi(struct future* FGptr){
         for (x=0; x<SCREENWIDTH; x++){
             //FGptr->botdistancemap[x][y]
             //FGptr->usrdistancemap[x][y]
-            if (FGptr->botdistancemap[x][y] != FGptr->usrdistancemap[x][y]) {
-                sign = (2 * ((FGptr->botdistancemap[x][y] > 0) && (FGptr->usrdistancemap[x][y] > 0))) - 1;
-                result += sign * (2 * (FGptr->botdistancemap[x][y] < FGptr->usrdistancemap[x][y])) - 1;
+            if (FGptr->botdistancemap[x][y] == -1) result -= 100;
+            if (FGptr->usrdistancemap[x][y] == -1) result += 80;
+            if ((FGptr->usrdistancemap[x][y] > 0) && (FGptr->botdistancemap[x][y] > 0)){
+                //if (FGptr->usrdistancemap[x][y] > FGptr->botdistancemap[x][y]) result += 10;
+                //if (FGptr->usrdistancemap[x][y] < FGptr->botdistancemap[x][y]) result -= 10;
+                result += (FGptr->usrdistancemap[x][y] - FGptr->botdistancemap[x][y]) / 10;
             }
+            //result += FGptr->usrdistancemap[x][y] - currentusrdistancemap[x][y];
+            //result -= FGptr->botdistancemap[x][y] - currentbotdistancemap[x][y];
         }
     }
     
