@@ -19,6 +19,7 @@ FILE: ai.c
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
+#include <limits.h>
 
 #include "engine.h"
 #include "snake.h"
@@ -117,13 +118,15 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     }
 
     //TESTING
-    /*
+    ///*
     fprintf(fp, "AT OUTER MINIMAX:\n");
     for (i=0; i<3; i++){
         fprintf(fp, "\tDirection=%d\tScore = %d\n", movesarray[0][i], movesarray[1][i]);
     }
     fprintf(fp, "SELECTED = Direction=%d\tScore = %d\n", movesarray[0][aiMaxOf3(movesarray[1])], movesarray[1][aiMaxOf3(movesarray[1])]);
-    */
+    fprintf(fp, "INT_MAX = %d\nINT_MIN = %d\n", INT_MAX, INT_MIN);
+    fprintf(fp, "INT_MAX/10 = %d\nINT_MIN/10 = %d\n", INT_MAX/10, INT_MIN/10);
+    //*/
 
 	
 
@@ -139,7 +142,7 @@ int aiScore( struct future FG, int direction, int depth){
 	snakeUpdateDirection (FG.bot, direction);
 	aiElongate (FG.bot);
 	
-	if (FG.bot.alive == 0) return -100000;	
+	if (FG.bot.alive == 0) return INT_MIN/3;	
 	
 	int i;
 	int j = 0;
@@ -170,12 +173,10 @@ int aiScore( struct future FG, int direction, int depth){
 int aiSubScore( struct future FG, int direction, int depth){
 	snakeUpdateDirection (FG.usr, direction);
 	aiElongate (FG.usr);
-	if (FG.usr.alive == 0) return 100000;	
+	if (FG.usr.alive == 0) return INT_MAX/3;	
 	if (depth >= DIFFICULTY) {
         int score = aiVoronoi(&FG);
 	    //TESTING ONLY
-        //TESTING
-        
         fprintf(fp, "AT AiSUBSCORE Depth = %d: (DIFFICULTY HIT)\n", depth);
         fprintf(fp, "VORONOI Score = %d\n", score);
         
@@ -210,25 +211,38 @@ int aiSubScore( struct future FG, int direction, int depth){
 
 
 int aiVoronoi(struct future* FGptr){  
+    int botcomponent, usrcomponent, result = 0;
+    
+    FGptr->map[FGptr->usr.head.x][FGptr->usr.head.y] = FGptr->map[FGptr->bot.head.x][FGptr->bot.head.y] = 0;
+    botcomponent = aiDijkstra(FGptr->map, FGptr->botdistancemap, FGptr->bot.head.x, FGptr->bot.head.y);
+    usrcomponent = aiDijkstra(FGptr->map, FGptr->usrdistancemap, FGptr->usr.head.x, FGptr->usr.head.y);
+    
+    FGptr->map[FGptr->usr.head.x][FGptr->usr.head.y] = FGptr->usr.marker;
+    FGptr->map[FGptr->bot.head.x][FGptr->bot.head.y] = FGptr->bot.marker;
+    
+    
+    if (FGptr->botdistancemap[FGptr->usr.head.x][FGptr->usr.head.y] == -1){
+        if (botcomponent > usrcomponent) {
+            result = (botcomponent - usrcomponent) * 10000;
+        }
+        //TESTING
+        fprintf(fp, "IF THE BOT CUTS OFF THE PLAYER\nDifference in component size = %d\nBonus Score = %d\n", botcomponent - usrcomponent, result);
+    }
     int x, y;
-    aiDijkstra(FGptr->map, FGptr->botdistancemap, FGptr->bot.head.x, FGptr->bot.head.y);
-    aiDijkstra(FGptr->map, FGptr->usrdistancemap, FGptr->usr.head.x, FGptr->usr.head.y);
-    
-    int result = 0;
-    int sign;
-    
     for (y=0; y<SCREENHEIGHT; y++){
         for (x=0; x<SCREENWIDTH; x++){
+            //VARIABLES:
             //FGptr->botdistancemap[x][y]
             //FGptr->usrdistancemap[x][y]
-            if (FGptr->botdistancemap[x][y] == -1) result -= 100;
-            if (FGptr->usrdistancemap[x][y] == -1) result += 80;
+            
+            if (FGptr->botdistancemap[x][y] == -1) result -= 150;
+            if (FGptr->usrdistancemap[x][y] == -1) result += 400;
             if ((FGptr->usrdistancemap[x][y] > 0) && (FGptr->botdistancemap[x][y] > 0)){
                 //if (FGptr->usrdistancemap[x][y] > FGptr->botdistancemap[x][y]) result += 10;
                 //if (FGptr->usrdistancemap[x][y] < FGptr->botdistancemap[x][y]) result -= 10;
-                result += (FGptr->usrdistancemap[x][y] - FGptr->botdistancemap[x][y]) / 10;
+                result += (FGptr->usrdistancemap[x][y] - (FGptr->botdistancemap[x][y] / 3)) * 50;
             }
-            //result += FGptr->usrdistancemap[x][y] - currentusrdistancemap[x][y];
+            result += (FGptr->usrdistancemap[x][y] - currentusrdistancemap[x][y]) * 40;
             //result -= FGptr->botdistancemap[x][y] - currentbotdistancemap[x][y];
         }
     }
@@ -258,11 +272,13 @@ int aiVoronoi(struct future* FGptr){
 
 
 
-//For a map of dimension SCREENWIDTH x SCREENHEIGHT, with walls as borders.
-void aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y){
+//For a map of dimension SCREENWIDTH x SCREENHEIGHT, with walls as borders ONLY.
+//Returns the size of the component
+int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y){
     //Note that -1 is a distance of infinity
     int x, y;
     int i, j, k;
+    int componentsize = 0;
     
     //Initialize distance to infinity
     for (x=0; x<SCREENWIDTH; x++){
@@ -287,6 +303,7 @@ void aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][S
         //Pick a vertex    
         x = dequeue (&dijk_unvisited_x);
         y = dequeue (&dijk_unvisited_y);
+        componentsize++;
         
 
         //Update its neighbours
@@ -297,6 +314,7 @@ void aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][S
                 //When all edges have weight 1, it's impossible that an unvisited neighbour's
                 //shortest distance will be <= the current vertex's distance.
                 //So we don't need to compare it.
+                //And this is why the first element in the queue is also the one with the shortest distance.
                 distance[x+i][y+j] = distance[x][y] + 1;
                 enqueue (&dijk_unvisited_x, x+i);
                 enqueue (&dijk_unvisited_y, y+j);
@@ -307,15 +325,15 @@ void aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][S
     map[start_x][start_y] = temp;
     
     //FOR TESTING
-    /*
+    /*fprintf(fp, "\n\n***DJIKSTRA***\n\tComponent Size = %d\n\n", componentsize);
     for (y=0; y<SCREENHEIGHT; y++){
         for (x=0; x<SCREENWIDTH; x++){
             fprintf(fp, "%c(%3d)  ", map[x][y], distance[x][y]);
         }
         fprintf(fp, "\n\n");
     }
-    fprintf(fp, "\n\n\n\n\n\n\n");
-    */
+    fprintf(fp, "\n\n\n\n\n\n\n");*/
     
-    return;
+    
+    return componentsize;
 }

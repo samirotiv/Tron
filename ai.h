@@ -41,7 +41,7 @@ int aiMaxOf3( int *);
 int aiScore( struct future futuregame, int direction, int depth);
 int aiSubScore( struct future futuregame, int direction, int depth);
 
-void aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y);
+int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y);
 int aiVoronoi(struct future* FGptr);
 
 
