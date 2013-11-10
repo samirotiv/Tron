@@ -10,10 +10,18 @@ FILE: engine.c
 #include <curses.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <errno.h>
+#include <unistd.h>
+#include <time.h>
+
 #include "engine.h"
 #include "snake.h"
+#include "ai.h"
 
 struct gamestructure game;
+
+
 
 
 /*
@@ -129,6 +137,42 @@ void engineProcessGameWinner(){
     else if (snake2.alive != 0) game.winner = 2;
     else game.winner = 0;
 }
+
+
+
+
+
+
+
+void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer, long int usleeptime){
+    struct timespec timeout;
+    pthread_t aithread;
+    int error = 0;
+    void *exitstatus;
+    
+    //Set initial direction
+    botsnakepointer->bot_newdirection = botsnakepointer->direction;
+    
+    //Format data
+    struct snakestructure* snakes[] = {botsnakepointer, usrsnakepointer};
+    
+    //Start the aiProcessGame thread.
+    doneflag = 0;
+    pthread_create(&aithread, NULL, aiProcessGame, snakes);
+    
+    timeout.tv_sec = usleeptime / 1000000;
+    timeout.tv_nsec = (usleeptime % 1000000) * 1000;
+    nanosleep(&timeout, NULL);
+    
+    
+    error = pthread_cancel(aithread);    
+    error = pthread_join(aithread, &exitstatus);
+    
+    if (doneflag == 1) {enginePrintF (5, SCREENHEIGHT + 1, "THREAD FINISHED SUCCESSFULLY");}
+    if (doneflag == 0) {enginePrintF (5, SCREENHEIGHT + 1, "THREAD ABORTED, IT SEEMS    ");}
+    
+}
+
 
     
  

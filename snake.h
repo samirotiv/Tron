@@ -7,6 +7,9 @@ FILE: snake.h
 
 */
 
+#ifndef SNAKE_DEFINED
+#define SNAKE_DEFINED
+
 //..################_________---GLOBAL SNAKE STRUCTURE---_________###############
 #define UP -2
 #define DOWN 2
@@ -42,6 +45,7 @@ struct snakestructure {
     int direction;
     int size;
     
+    //Use this in the internal game map
     char marker;
     
     //For BOT
@@ -60,6 +64,7 @@ void snakeInit();
 
 
 //..################_________---SNAKE MACROS---_________###############
+#define snakeIsDirectionAllowed(macro_snake, macro_direction) (macro_snake.direction + macro_direction != 0)
 
 //Update direction of snake
 #define snakeUpdateDirection(macro_snake, macro_direction)  if (macro_snake.direction + macro_direction != 0) {macro_snake.direction = macro_direction;}
@@ -80,4 +85,7 @@ void snakeInit();
                     EquatePoint (m_snake.position[m_snake.size - 1], m_snake.head);         \
                 }
                 
-                
+
+
+
+#endif        

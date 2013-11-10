@@ -26,6 +26,8 @@ void ExitGame();
 
 int main(){
 //STRICTLY TEMPORARY - TESTING ONLY
+fp = fopen ("err.txt", "w");
+
     engineInit();
     menuMainMenu();
 
@@ -119,12 +121,9 @@ void TwoPlayerGame(){
 void SinglePlayerGame(){
     engineStartGameEnvironment();
     int c;
-
-    //TEMPORARY LINE:
-    game.map[snake2.head.x][snake2.head.y] = 0;
     
     while((snake1.alive == 1) && (snake2.alive == 1)){
-        aiProcessAndSleep(&snake2, GAMEDELAY);
+        engineSleepAndCallBot(&snake2, &snake1, GAMEDELAY);
         switch (c = getch()){
             case ERR:
 				// If we get no input

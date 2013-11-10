@@ -47,6 +47,7 @@ void engineClearMap();
 void engineStartGameEnvironment();
 void engineStartMenuEnvironment();
 void engineProcessGameWinner();
+//void engineSleepAndCallBot(struct snakestructure*, long int);
 
 
 
@@ -58,10 +59,6 @@ void engineProcessGameWinner();
 
 //Add point
 #define engineAddCharFromPoint(m_point, m_symbol) mvaddch(m_point.y, m_point.x, m_symbol)
-
-#endif
-
-
 
 
 
@@ -79,3 +76,7 @@ typedef struct queue_ {
 void InitQueue (queue* q);
 void enqueue (queue* q, int val);
 int dequeue (queue* q);
+
+
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef MENU_DEFINED
+#define MENU_DEFINED
 
 #define MENUBORDER '*'
 #define MENUBOXWIDTH 50
@@ -22,3 +24,6 @@ void menuStartAtrribute (int );
 
 void menuEndPrint(int highlight);
 void menuEndGame();
+
+
+#endif
