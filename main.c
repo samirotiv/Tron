@@ -121,44 +121,55 @@ void TwoPlayerGame(){
 
 void SinglePlayerGame(){
     engineStartGameEnvironment();
-    int c;
+    int c, new_direction;
+    
+    queue player1buffer;
+    int buffer1[MAXKEYBUFFERSIZE];
+    InitQueue(&player1buffer, buffer1, MAXKEYBUFFERSIZE);
     
     while((snake1.alive == 1) && (snake2.alive == 1)){
         engineSleepAndCallBot(&snake2, &snake1, GAMEDELAY);
-        switch (c = getch()){
-            case ERR:
-				// If we get no input
-				break;
+        while ((c = getch()) != ERR){
+            switch (c){
+                case ERR:
+                    // If we get no input
+                    break;
 
-            case KEY_UP:
-                snakeUpdateDirection(snake1, UP);
-                break;
+                case KEY_UP:
+                    if (player1buffer.lastenqueued != UP) enqueue (&player1buffer, UP);
+                    break;
 
-            case KEY_LEFT:
-                snakeUpdateDirection(snake1, LEFT);
-                break;
+                case KEY_LEFT:
+                    if (player1buffer.lastenqueued != LEFT) enqueue (&player1buffer, LEFT);
+                    break;
 
-            case KEY_DOWN:
-                snakeUpdateDirection(snake1, DOWN);
-                break;
+                case KEY_DOWN:
+                    if (player1buffer.lastenqueued != DOWN) enqueue (&player1buffer, DOWN);
+                    break;
 
-            case KEY_RIGHT:
-                snakeUpdateDirection(snake1, RIGHT);
-                break;
+                case KEY_RIGHT:
+                    if (player1buffer.lastenqueued != RIGHT) enqueue (&player1buffer, RIGHT);
+                    break;
 
-            case 'q':	case 'Q':
-                ExitGame();
-                break;
+                case 'q':	case 'Q':
+                    ExitGame();
+                    break;
 
-            case 'p':	case 'P':
-				//Pause
-				break;
+                case 'p':	case 'P':
+                    //Pause
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
         
         snakeUpdateDirection(snake2, snake2.bot_newdirection);
+        
+        if (player1buffer.size != 0) {
+            new_direction = dequeue(&player1buffer);
+            snakeUpdateDirection(snake1, new_direction);
+        }
         
         snakeElongate (snake1);
         snakeElongate (snake2);

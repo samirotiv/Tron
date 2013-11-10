@@ -177,8 +177,10 @@ int aiSubScore( struct future FG, int direction, int depth){
 	if (depth >= DIFFICULTY) {
         int score = aiVoronoi(&FG);
 	    //TESTING ONLY
+        /*
         fprintf(fp, "AT AiSUBSCORE Depth = %d: (DIFFICULTY HIT)\n", depth);
         fprintf(fp, "VORONOI Score = %d\n", score);
+        */
         
         //TEMPORARY - might be changed
 	    return score;
@@ -235,15 +237,15 @@ int aiVoronoi(struct future* FGptr){
             //FGptr->botdistancemap[x][y]
             //FGptr->usrdistancemap[x][y]
             
-            if (FGptr->botdistancemap[x][y] == -1) result -= 150;
-            if (FGptr->usrdistancemap[x][y] == -1) result += 400;
+            if (FGptr->botdistancemap[x][y] == -1) result -= 50;
+            if (FGptr->usrdistancemap[x][y] == -1) result += 50;
             if ((FGptr->usrdistancemap[x][y] > 0) && (FGptr->botdistancemap[x][y] > 0)){
-                //if (FGptr->usrdistancemap[x][y] > FGptr->botdistancemap[x][y]) result += 10;
-                //if (FGptr->usrdistancemap[x][y] < FGptr->botdistancemap[x][y]) result -= 10;
-                result += (FGptr->usrdistancemap[x][y] - (FGptr->botdistancemap[x][y] / 3)) * 50;
+                if (FGptr->usrdistancemap[x][y] > FGptr->botdistancemap[x][y]) result += 10;
+                if (FGptr->usrdistancemap[x][y] < FGptr->botdistancemap[x][y]) result -= 10;
+                result += (FGptr->usrdistancemap[x][y]) / 30;
+                result -= (FGptr->botdistancemap[x][y]) / 40;
             }
-            result += (FGptr->usrdistancemap[x][y] - currentusrdistancemap[x][y]) * 40;
-            //result -= FGptr->botdistancemap[x][y] - currentbotdistancemap[x][y];
+
         }
     }
     
