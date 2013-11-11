@@ -177,6 +177,11 @@ void SinglePlayerGame(){
         
         snakeElongate (snake1);
         snakeElongate (snake2);
+        
+        //TESTING ONLY
+        //To read debugging text
+        attrset(COLOR_PAIR(OUTSIDE_COLORCODE));
+        
         refresh();
     }
     

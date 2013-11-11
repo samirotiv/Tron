@@ -18,9 +18,9 @@ FILE: snake.h
 #define RIGHT 1
 
 #define SNAKE1_STARTX 4
-#define SNAKE2_STARTX 75
-#define SNAKE1_STARTY 12
-#define SNAKE2_STARTY 12
+#define SNAKE2_STARTX (SCREENWIDTH - 5)
+#define SNAKE1_STARTY (SCREENHEIGHT/2)
+#define SNAKE2_STARTY (SCREENHEIGHT/2)
 #define SNAKE1_STARTDIRECTION RIGHT
 #define SNAKE2_STARTDIRECTION LEFT
 #define SNAKE1_MARKER 1
@@ -49,6 +49,8 @@ struct snakestructure {
     
     //Use this in the internal game map
     char marker;
+    char colorcode;
+    char headcolorcode;
     
     //For BOT
     int bot_newdirection;
@@ -73,6 +75,7 @@ void snakeInit();
 
 //Elongate snake    (WARNING: DOES NOT CHECK IF INPUT IS OUT OF RANGE)
 #define snakeElongate(m_snake) {                                                            \
+                    attrset(COLOR_PAIR(m_snake.colorcode));                                 \
                     engineAddCharFromPoint (m_snake.head, SNAKEBODY);                       \
                     MovePoint (m_snake.head, m_snake.direction % 2, m_snake.direction / 2); \
                                                                                             \
@@ -81,6 +84,7 @@ void snakeInit();
                         }                                                                   \
                                                                                             \
                     game.map[m_snake.head.x][m_snake.head.y] = m_snake.marker;             \
+                    attrset(COLOR_PAIR(m_snake.headcolorcode));                             \
                     engineAddCharFromPoint (m_snake.head, SNAKEHEAD);                       \
                     m_snake.size++;                                                         \
                                                                                             \

@@ -24,6 +24,11 @@ void snakeInit(){
 
     snake1.marker = SNAKE1_MARKER;
     snake2.marker = SNAKE2_MARKER;
+    
+    snake1.colorcode = SNAKE1_COLORCODE;
+    snake2.colorcode = SNAKE2_COLORCODE;
+    snake1.headcolorcode = SNAKE1HEAD_COLORCODE;
+    snake2.headcolorcode = SNAKE2HEAD_COLORCODE;
 
     game.map[snake1.head.x][snake1.head.y] = snake1.marker;
     game.map[snake2.head.x][snake2.head.y] = snake2.marker;

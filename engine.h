@@ -21,6 +21,17 @@ FILE: engine.h
 #define SNAKEBODY '#'
 
 
+//ALL GAME COLORCODES
+#define SNAKE1_COLORCODE 1
+#define SNAKE2_COLORCODE 2
+#define WALL_COLORCODE 3
+#define OUTSIDE_COLORCODE 4
+#define SNAKE1HEAD_COLORCODE 5
+#define SNAKE2HEAD_COLORCODE 6
+
+#define COLOR_GREY 8
+
+
 //#####################________________-----UNIVERSAL GAME STRUCTURE------__________________####################
 
 struct gamestructure {
@@ -37,7 +48,7 @@ struct gamestructure {
 
 //TODO: CREATE A FUNCTION
 //#define GAMEDELAY 200000
-#define GAMEDELAY 200000
+#define GAMEDELAY 150000
 #define MAXKEYBUFFERSIZE 3
 #define ENGINETIMEOUTCOUNTER 30
 

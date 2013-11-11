@@ -40,6 +40,10 @@ void engineInit(){
     int current_height, current_width;
 	// Gets the current width and height of the terminal
 	getmaxyx (stdscr, current_height, current_width);
+	
+	//Initialize colors
+	start_color();
+	
 
 	if ((current_width < SCREENWIDTH) || (current_height < SCREENHEIGHT)){
         endwin();
@@ -69,6 +73,15 @@ void engineStartGameEnvironment(){
     engineDrawWalls();
     snakeInit();
     game.depth = game.difficulty;
+    //init_color(COLOR_GREY, 100, 100, 100);
+    
+    //Initialize game colours
+    init_pair(SNAKE1_COLORCODE, COLOR_BLUE, COLOR_BLUE);
+    init_pair(SNAKE2_COLORCODE, COLOR_RED, COLOR_RED);
+    init_pair(SNAKE1HEAD_COLORCODE, COLOR_BLACK, COLOR_BLACK);
+    init_pair(SNAKE2HEAD_COLORCODE, COLOR_BLACK, COLOR_BLACK);
+    init_pair(WALL_COLORCODE, COLOR_BLACK, COLOR_BLACK);
+    init_pair(OUTSIDE_COLORCODE, COLOR_BLACK, COLOR_WHITE);
 
     refresh();
     flushinp();
@@ -92,8 +105,11 @@ void engineStartMenuEnvironment(){
 
 void engineDrawWalls(){
     //Clear screen
+    attrset(COLOR_PAIR(OUTSIDE_COLORCODE));
     erase();
-
+    bkgd(COLOR_PAIR(OUTSIDE_COLORCODE));
+    
+    attrset(COLOR_PAIR(WALL_COLORCODE));
     //Draw vertical walls
     int y;
     for (y=0; y<SCREENHEIGHT; y++){
