@@ -38,14 +38,16 @@ struct future{
 void* aiProcessGame(void *data);
 int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer);
 int aiMaxOf3( int *);
-int aiScore( struct future futuregame, int direction, int depth);
-int aiSubScore( struct future futuregame, int direction, int depth);
+int aiScore( struct future futuregame, int direction, int depth, int alreadyattained);
+int aiSubScore( struct future futuregame, int direction, int depth, int alreadyattained);
 
 int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y);
 int aiVoronoi(struct future* FGptr);
 
 
 #define aiMaxOf3(m_arr) ( m_arr[2]>m_arr[((m_arr[1]>m_arr[0])?1:0)])?2:((m_arr[1]>m_arr[0])?1:0)
+
+#define aiMinOf3(m_arr) ( m_arr[2]<m_arr[((m_arr[1]<m_arr[0])?1:0)])?2:((m_arr[1]<m_arr[0])?1:0)
 
 
 //Elongate snake    (WARNING: DOES NOT CHECK IF INPUT IS OUT OF RANGE)

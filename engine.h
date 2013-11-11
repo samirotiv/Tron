@@ -14,7 +14,7 @@ FILE: engine.h
 #define SCREENHEIGHT 24
 #define SCREENWIDTH 80
 //Max squares = SCRHEIGHT * SCRWIDTH
-#define MAXSQUARES 2000
+#define MAXSQUARES (SCREENHEIGHT * SCREENWIDTH)
 
 #define WALL 'W'
 #define SNAKEHEAD '@'
@@ -32,7 +32,11 @@ struct gamestructure {
     char map[SCREENWIDTH][SCREENHEIGHT];
 };
 
-#define GAMEDELAY 200000
+
+
+//TODO: CREATE A FUNCTION
+//#define GAMEDELAY 200000
+#define GAMEDELAY 150000
 #define MAXKEYBUFFERSIZE 3
 
 #define PLAYER1 1

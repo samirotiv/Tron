@@ -42,9 +42,6 @@ int dijk_seq[4] = {0, 0, 1, -1};
 int test=1;
 FILE* fp;
 
-//For the Voronoi Heuristic
-int currentbotdistancemap[SCREENWIDTH][SCREENHEIGHT];
-int currentusrdistancemap[SCREENWIDTH][SCREENHEIGHT];
 
 
 
@@ -103,16 +100,15 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     memcpy (&(FG.bot), botsnakepointer, sizeof(struct snakestructure));
     memcpy (&(FG.usr), usrsnakepointer, sizeof(struct snakestructure));
 
-    //FOR VORONOI
-    aiDijkstra(FG.map, currentusrdistancemap, FG.usr.head.x, FG.usr.head.y);
-    aiDijkstra(FG.map, currentbotdistancemap, FG.bot.head.x, FG.bot.head.y);
     
+    int hialreadyattained = INT_MIN;   //alpha
     int movesarray[2][3];   //There are going to be 3 allowed directions
     j = 0;  //Incremented every time an allowed direction is encountered
     for (i=0; i<4; i++){
     	if (snakeIsDirectionAllowed (FG.bot, directions[i])) {
     		movesarray[0][j] = directions[i];
-    		movesarray[1][j] = aiScore(FG, directions[i], 0);
+    		movesarray[1][j] = aiScore(FG, directions[i], 0, hialreadyattained);
+            if (hialreadyattained < movesarray[1][j]) hialreadyattained = movesarray[1][j];
     		j++;
     	}
     }
@@ -124,8 +120,11 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
         fprintf(fp, "\tDirection=%d\tScore = %d\n", movesarray[0][i], movesarray[1][i]);
     }
     fprintf(fp, "SELECTED = Direction=%d\tScore = %d\n", movesarray[0][aiMaxOf3(movesarray[1])], movesarray[1][aiMaxOf3(movesarray[1])]);
-    fprintf(fp, "INT_MAX = %d\nINT_MIN = %d\n", INT_MAX, INT_MIN);
-    fprintf(fp, "INT_MAX/10 = %d\nINT_MIN/10 = %d\n", INT_MAX/10, INT_MIN/10);
+    //fprintf(fp, "INT_MAX = %d\nINT_MIN = %d\n", INT_MAX, INT_MIN);
+    //fprintf(fp, "INT_MAX/10 = %d\nINT_MIN/10 = %d\n", INT_MAX/10, INT_MIN/10);
+    
+    int arr[] = {5, 7, 3};
+    fprintf(fp, "Minimum Index=%d\n", aiMinOf3(arr));
     //*/
 
 	
@@ -138,18 +137,30 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
 
 
 /*Recursive function to find score of a direction*/
-int aiScore( struct future FG, int direction, int depth){
+//Returns the minimum score the maximizing player (bot) is assured of - for a certain move by the bot.
+int aiScore( struct future FG, int direction, int depth, int hialreadyattained){
+    //Move the maximizing player (bot) in the specified direction
 	snakeUpdateDirection (FG.bot, direction);
 	aiElongate (FG.bot);
 	
 	if (FG.bot.alive == 0) return INT_MIN/3;	
 	
+    //Now find the minimum score he's assured of.
+    int lowalreadyattained = INT_MAX;
 	int i;
 	int j = 0;
-	int negativesubscores[3];
+	int subscores[3];
 	for (i=0; i<4; i++){
     	if (snakeIsDirectionAllowed (FG.usr, directions[i])) {
-    		negativesubscores[j] = 0 - aiSubScore(FG, directions[i], depth + 1);
+    		subscores[j] = aiSubScore(FG, directions[i], depth + 1, lowalreadyattained);
+            if (lowalreadyattained > subscores[j]) lowalreadyattained = subscores[j];
+            
+            if (hialreadyattained > subscores[j]) {
+                //TESTING ONLY
+                fprintf(fp, "\nALPHA BETA PRUNED AT AISCORE\n");
+
+                return INT_MIN;
+            }
     		j++;
     	}
     }
@@ -163,17 +174,20 @@ int aiScore( struct future FG, int direction, int depth){
     }
     fprintf(fp, "SELECTED SubScore = %d\n", 0 - negativesubscores[aiMaxOf3(negativesubscores)]);*/
     
-    return (0 - negativesubscores[aiMaxOf3(negativesubscores)]);
+    return (subscores[aiMinOf3(subscores)]);
 }
 
 
 
 
 /*Recursive function to find subscore of a direction*/
-int aiSubScore( struct future FG, int direction, int depth){
+//Returns the maximum score the minimizing player (human) is assured of - for a specified move of the player
+int aiSubScore( struct future FG, int direction, int depth, int lowalreadyattained){
+    //Move the minimizing player (human) in the specified direction
 	snakeUpdateDirection (FG.usr, direction);
 	aiElongate (FG.usr);
-	if (FG.usr.alive == 0) return INT_MAX/3;	
+	if (FG.usr.alive == 0) return INT_MAX/3;
+    
 	if (depth >= DIFFICULTY) {
         int score = aiVoronoi(&FG);
 	    //TESTING ONLY
@@ -186,12 +200,23 @@ int aiSubScore( struct future FG, int direction, int depth){
 	    return score;
     }
 	
+    //Now find the minimum score he's assured of.
+    int hialreadyattained = INT_MIN;
 	int i;
     int j = 0;
 	int scores[3];
 	for (i=0; i<4; i++){
     	if (snakeIsDirectionAllowed (FG.bot, directions[i])) {
-    		scores[j] = aiScore(FG, directions[i], depth);
+    		scores[j] = aiScore(FG, directions[i], depth, hialreadyattained);
+            if (hialreadyattained < scores[j]) hialreadyattained = scores[j];
+            
+            if (lowalreadyattained < scores[j]) {
+                //TESTING ONLY
+                fprintf(fp, "\nALPHA BETA PRUNED AT AISUBSCORE\n");
+
+                return INT_MAX;
+            }
+            
     		j++;
     	}
     }
@@ -228,7 +253,7 @@ int aiVoronoi(struct future* FGptr){
             result = (botcomponent - usrcomponent) * 10000;
         }
         //TESTING
-        fprintf(fp, "IF THE BOT CUTS OFF THE PLAYER\nDifference in component size = %d\nBonus Score = %d\n", botcomponent - usrcomponent, result);
+        //fprintf(fp, "IF THE BOT CUTS OFF THE PLAYER\nDifference in component size = %d\nBonus Score = %d\n", botcomponent - usrcomponent, result);
     }
     int x, y;
     for (y=0; y<SCREENHEIGHT; y++){
@@ -243,7 +268,7 @@ int aiVoronoi(struct future* FGptr){
                 if (FGptr->usrdistancemap[x][y] > FGptr->botdistancemap[x][y]) result += 10;
                 if (FGptr->usrdistancemap[x][y] < FGptr->botdistancemap[x][y]) result -= 10;
                 result += (FGptr->usrdistancemap[x][y]) / 30;
-                result -= (FGptr->botdistancemap[x][y]) / 40;
+                result -= (FGptr->botdistancemap[x][y]) / 30;
             }
 
         }

@@ -9,6 +9,7 @@ FILE: snake.h
 
 #ifndef SNAKE_DEFINED
 #define SNAKE_DEFINED
+#include "engine.h"
 
 //..################_________---GLOBAL SNAKE STRUCTURE---_________###############
 #define UP -2
@@ -26,7 +27,7 @@ FILE: snake.h
 #define SNAKE2_MARKER 2
 
 //Maxsnakesize = Half of number of squares
-#define MAXSNAKESIZE 1000
+#define MAXSNAKESIZE (MAXSQUARES / 2)
 
 struct point {
     int x;

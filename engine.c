@@ -43,7 +43,7 @@ void engineInit(){
 
 	if ((current_width < SCREENWIDTH) || (current_height < SCREENHEIGHT)){
         endwin();
-        printf ("Your console screen is smaller than 80x24\nPlease resize your window and try again\n\n");
+        printf ("Your console screen is smaller than %d x %d\nPlease resize your window and try again\n\n", SCREENWIDTH, SCREENHEIGHT);
         exit(0);
     }
     
@@ -166,17 +166,17 @@ void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakes
     
     //FOR TESTING ONLY
     //DISABLED KILL FOR TESTING
-    //error = pthread_cancel(aithread);    
+    error = pthread_cancel(aithread);    
     error = pthread_join(aithread, &exitstatus);
     
     //FOR TESTING ONLY
     if (doneflag == 1) {
         enginePrintF (5, SCREENHEIGHT + 1, "THREAD FINISHED SUCCESSFULLY");
-        fprintf(fp, "THREAD FINISHED SUCCESSFULLY\n");
+        //fprintf(fp, "THREAD FINISHED SUCCESSFULLY\n");
         }
     if (doneflag == 0) {
         enginePrintF (5, SCREENHEIGHT + 1, "THREAD ABORTED, IT SEEMS    ");
-        fprintf(fp, "THREAD ABORTED, IT SEEMS\n");
+        //fprintf(fp, "THREAD ABORTED, IT SEEMS\n");
         }
     
     return;
