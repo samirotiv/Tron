@@ -26,7 +26,8 @@ FILE: engine.h
 struct gamestructure {
     char state;
     char speed;
-    char difficulty;
+    int difficulty;
+    int depth;
     char winner;
     
     char map[SCREENWIDTH][SCREENHEIGHT];
@@ -36,8 +37,9 @@ struct gamestructure {
 
 //TODO: CREATE A FUNCTION
 //#define GAMEDELAY 200000
-#define GAMEDELAY 150000
+#define GAMEDELAY 200000
 #define MAXKEYBUFFERSIZE 3
+#define ENGINETIMEOUTCOUNTER 30
 
 #define PLAYER1 1
 #define PLAYER2 2

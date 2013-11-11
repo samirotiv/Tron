@@ -120,7 +120,11 @@ void TwoPlayerGame(){
 
 
 void SinglePlayerGame(){
+    //TEMPORARY
+    game.difficulty = DIFFICULTY;
+    
     engineStartGameEnvironment();
+    
     int c, new_direction;
     
     queue player1buffer;

@@ -30,6 +30,7 @@ FILE: ai.c
 pthread_mutex_t processing = PTHREAD_MUTEX_INITIALIZER;
 int doneflag;
 
+
 //Global Misc. Variables
 int directions[] = {LEFT, UP, RIGHT, DOWN};
 
@@ -38,6 +39,8 @@ queue dijk_unvisited_x, dijk_unvisited_y;
 int dijk_unvisited_x_arr[MAXSQUARES], dijk_unvisited_y_arr[MAXSQUARES];
 int dijk_seq[4] = {0, 0, 1, -1}; 
 
+
+//TODO: IMPLEMENT GAME DIFFICULTY THROUGH MENUS
 //TESTING ONLY
 int test=1;
 FILE* fp;
@@ -191,13 +194,13 @@ int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta)
 	aiElongate (FG.usr);
 	if (FG.usr.alive == 0) return INT_MAX/3;
     
-	if (depth >= DIFFICULTY) {
+	if (depth >= game.depth) {
         int score = aiVoronoi(&FG);
 	    //TESTING ONLY
-        /*
-        fprintf(fp, "AT AiSUBSCORE Depth = %d: (DIFFICULTY HIT)\n", depth);
-        fprintf(fp, "VORONOI Score = %d\n", score);
-        */
+        
+        fprintf(fp, "AT AiSUBSCORE Depth = %d: (DIFFICULTY HIT)\n", game.depth);
+        //fprintf(fp, "VORONOI Score = %d\n", score);
+        
         
         //TEMPORARY - might be changed
 	    return score;
@@ -270,7 +273,7 @@ int aiVoronoi(struct future* FGptr){
                 if (FGptr->usrdistancemap[x][y] > FGptr->botdistancemap[x][y]) result += 10;
                 if (FGptr->usrdistancemap[x][y] < FGptr->botdistancemap[x][y]) result -= 10;
                 result += (FGptr->usrdistancemap[x][y]) / 30;
-                result -= (FGptr->botdistancemap[x][y]) / 30;
+                result -= (FGptr->botdistancemap[x][y]) / 40;
             }
 
         }

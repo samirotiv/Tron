@@ -68,6 +68,7 @@ void engineStartGameEnvironment(){
     engineClearMap();
     engineDrawWalls();
     snakeInit();
+    game.depth = game.difficulty;
 
     refresh();
     flushinp();
@@ -150,6 +151,9 @@ void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakes
     int error = 0;
     void *exitstatus;
     
+    //Dynamic depth
+    static int counter;
+    
     //Set initial direction
     botsnakepointer->bot_newdirection = botsnakepointer->direction;
     
@@ -169,15 +173,25 @@ void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakes
     error = pthread_cancel(aithread);    
     error = pthread_join(aithread, &exitstatus);
     
-    //FOR TESTING ONLY
     if (doneflag == 1) {
+        //FOR TESTING ONLY        
         enginePrintF (5, SCREENHEIGHT + 1, "THREAD FINISHED SUCCESSFULLY");
-        //fprintf(fp, "THREAD FINISHED SUCCESSFULLY\n");
+        
+        if (counter > 0) counter--;
+        else if (game.depth < game.difficulty) game.depth++;
         }
     if (doneflag == 0) {
+        //FOR TESTING ONLY
         enginePrintF (5, SCREENHEIGHT + 1, "THREAD ABORTED, IT SEEMS    ");
-        //fprintf(fp, "THREAD ABORTED, IT SEEMS\n");
+        
+        counter = ENGINETIMEOUTCOUNTER;
+        game.depth--;
         }
+    
+    //FOR TESTING ONLY
+    enginePrintF (5, SCREENHEIGHT + 2, "COUNTER = %d  ", counter);
+    enginePrintF (5, SCREENHEIGHT + 3, "DEPTH = %d  ", game.depth);
+    enginePrintF (5, SCREENHEIGHT + 4, "DIFFICULTY = %d  ", game.difficulty);
     
     return;
 }
