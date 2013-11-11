@@ -100,21 +100,25 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     memcpy (&(FG.bot), botsnakepointer, sizeof(struct snakestructure));
     memcpy (&(FG.usr), usrsnakepointer, sizeof(struct snakestructure));
 
+    //The minimum score that the maximizing player is assured of.
+    int alpha = INT_MIN;   //alpha
     
-    int hialreadyattained = INT_MIN;   //alpha
+    //The maximum score that the minimizing player is assured of.
+    int beta = INT_MAX;  //beta
+    
     int movesarray[2][3];   //There are going to be 3 allowed directions
     j = 0;  //Incremented every time an allowed direction is encountered
     for (i=0; i<4; i++){
     	if (snakeIsDirectionAllowed (FG.bot, directions[i])) {
     		movesarray[0][j] = directions[i];
-    		movesarray[1][j] = aiScore(FG, directions[i], 0, hialreadyattained);
-            if (hialreadyattained < movesarray[1][j]) hialreadyattained = movesarray[1][j];
+    		movesarray[1][j] = aiScore(FG, directions[i], 0, alpha, beta);
+            if (alpha < movesarray[1][j]) alpha = movesarray[1][j];
     		j++;
     	}
     }
 
     //TESTING
-    ///*
+    /*
     fprintf(fp, "AT OUTER MINIMAX:\n");
     for (i=0; i<3; i++){
         fprintf(fp, "\tDirection=%d\tScore = %d\n", movesarray[0][i], movesarray[1][i]);
@@ -125,7 +129,7 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     
     int arr[] = {5, 7, 3};
     fprintf(fp, "Minimum Index=%d\n", aiMinOf3(arr));
-    //*/
+    */
 
 	
 
@@ -138,7 +142,7 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
 
 /*Recursive function to find score of a direction*/
 //Returns the minimum score the maximizing player (bot) is assured of - for a certain move by the bot.
-int aiScore( struct future FG, int direction, int depth, int hialreadyattained){
+int aiScore( struct future FG, int direction, int depth, int alpha, int beta){
     //Move the maximizing player (bot) in the specified direction
 	snakeUpdateDirection (FG.bot, direction);
 	aiElongate (FG.bot);
@@ -146,18 +150,17 @@ int aiScore( struct future FG, int direction, int depth, int hialreadyattained){
 	if (FG.bot.alive == 0) return INT_MIN/3;	
 	
     //Now find the minimum score he's assured of.
-    int lowalreadyattained = INT_MAX;
 	int i;
 	int j = 0;
 	int subscores[3];
 	for (i=0; i<4; i++){
     	if (snakeIsDirectionAllowed (FG.usr, directions[i])) {
-    		subscores[j] = aiSubScore(FG, directions[i], depth + 1, lowalreadyattained);
-            if (lowalreadyattained > subscores[j]) lowalreadyattained = subscores[j];
+    		subscores[j] = aiSubScore(FG, directions[i], depth + 1, alpha, beta);
+            if (beta > subscores[j]) beta = subscores[j];
             
-            if (hialreadyattained > subscores[j]) {
+            if (alpha > beta) {
                 //TESTING ONLY
-                fprintf(fp, "\nALPHA BETA PRUNED AT AISCORE\n");
+                //fprintf(fp, "\nALPHA BETA PRUNED AT AISCORE\n");
 
                 return INT_MIN;
             }
@@ -182,7 +185,7 @@ int aiScore( struct future FG, int direction, int depth, int hialreadyattained){
 
 /*Recursive function to find subscore of a direction*/
 //Returns the maximum score the minimizing player (human) is assured of - for a specified move of the player
-int aiSubScore( struct future FG, int direction, int depth, int lowalreadyattained){
+int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta){
     //Move the minimizing player (human) in the specified direction
 	snakeUpdateDirection (FG.usr, direction);
 	aiElongate (FG.usr);
@@ -201,18 +204,17 @@ int aiSubScore( struct future FG, int direction, int depth, int lowalreadyattain
     }
 	
     //Now find the minimum score he's assured of.
-    int hialreadyattained = INT_MIN;
 	int i;
     int j = 0;
 	int scores[3];
 	for (i=0; i<4; i++){
     	if (snakeIsDirectionAllowed (FG.bot, directions[i])) {
-    		scores[j] = aiScore(FG, directions[i], depth, hialreadyattained);
-            if (hialreadyattained < scores[j]) hialreadyattained = scores[j];
+    		scores[j] = aiScore(FG, directions[i], depth, alpha, beta);
+            if (alpha < scores[j]) alpha = scores[j];
             
-            if (lowalreadyattained < scores[j]) {
+            if (beta < alpha) {
                 //TESTING ONLY
-                fprintf(fp, "\nALPHA BETA PRUNED AT AISUBSCORE\n");
+                //fprintf(fp, "\nALPHA BETA PRUNED AT AISUBSCORE\n");
 
                 return INT_MAX;
             }

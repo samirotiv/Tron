@@ -38,8 +38,8 @@ struct future{
 void* aiProcessGame(void *data);
 int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer);
 int aiMaxOf3( int *);
-int aiScore( struct future futuregame, int direction, int depth, int alreadyattained);
-int aiSubScore( struct future futuregame, int direction, int depth, int alreadyattained);
+int aiScore( struct future futuregame, int direction, int depth, int alpha, int beta);
+int aiSubScore( struct future futuregame, int direction, int depth, int alpha, int beta);
 
 int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y);
 int aiVoronoi(struct future* FGptr);
