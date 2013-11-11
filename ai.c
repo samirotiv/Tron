@@ -9,9 +9,6 @@ FILE: ai.c
 
 */
 
-#define botsnake (*botsnakepointer)
-#define usrsnake (*usrsnakepointer)
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -69,13 +66,12 @@ void *aiProcessGame(void *data){
 
     //DO OPERATIONS HERE
     //. . . . . . . . . . 
-    struct snakestructure** snakes = (struct snakestructure**) data;
-    struct snakestructure* botsnakepointer = (struct snakestructure*) snakes[0];
-    struct snakestructure* usrsnakepointer = (struct snakestructure*) snakes[1];
+    struct snakestructure* botsnakepointer = *((struct snakestructure**) data + 0);
+    struct snakestructure* usrsnakepointer = *((struct snakestructure**) data + 1);
     //Use 'botsnake' to dereference botsnakepointer.
     
     
-	botsnake.bot_newdirection = aiMinimax(botsnakepointer, usrsnakepointer);
+	botsnakepointer->bot_newdirection = aiMinimax(botsnakepointer, usrsnakepointer);
     
     //After Processing:
     //Ensure that a cancel doesn't take place here.
