@@ -13,7 +13,6 @@ FILE: engine.c
 #include <pthread.h>
 #include <errno.h>
 #include <unistd.h>
-#include <time.h>
 
 #include "engine.h"
 #include "snake.h"

@@ -9,12 +9,8 @@ FILE: ai.c
 
 */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <pthread.h>
 #include <errno.h>
-#include <unistd.h>
-#include <time.h>
 #include <string.h>
 #include <limits.h>
 
@@ -38,9 +34,6 @@ int dijk_seq[4] = {0, 0, 1, -1};
 
 
 //TODO: IMPLEMENT GAME DIFFICULTY THROUGH MENUS
-//TESTING ONLY
-int test=1;
-FILE* fp;
 
 
 
@@ -68,8 +61,6 @@ void *aiProcessGame(void *data){
     //. . . . . . . . . . 
     struct snakestructure* botsnakepointer = *((struct snakestructure**) data + 0);
     struct snakestructure* usrsnakepointer = *((struct snakestructure**) data + 1);
-    //Use 'botsnake' to dereference botsnakepointer.
-    
     
 	botsnakepointer->bot_newdirection = aiMinimax(botsnakepointer, usrsnakepointer);
     
@@ -115,21 +106,6 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
     		j++;
     	}
     }
-
-    //TESTING
-    /*
-    fprintf(fp, "AT OUTER MINIMAX:\n");
-    for (i=0; i<3; i++){
-        fprintf(fp, "\tDirection=%d\tScore = %d\n", movesarray[0][i], movesarray[1][i]);
-    }
-    fprintf(fp, "SELECTED = Direction=%d\tScore = %d\n", movesarray[0][aiMaxOf3(movesarray[1])], movesarray[1][aiMaxOf3(movesarray[1])]);
-    //fprintf(fp, "INT_MAX = %d\nINT_MIN = %d\n", INT_MAX, INT_MIN);
-    //fprintf(fp, "INT_MAX/10 = %d\nINT_MIN/10 = %d\n", INT_MAX/10, INT_MIN/10);
-    
-    int arr[] = {5, 7, 3};
-    fprintf(fp, "Minimum Index=%d\n", aiMinOf3(arr));
-    */
-
 	
 
     return movesarray[0][aiMaxOf3(movesarray[1])];
@@ -156,25 +132,10 @@ int aiScore( struct future FG, int direction, int depth, int alpha, int beta){
     	if (snakeIsDirectionAllowed (FG.usr, directions[i])) {
     		subscores[j] = aiSubScore(FG, directions[i], depth + 1, alpha, beta);
             if (beta > subscores[j]) beta = subscores[j];
-            
-            if (alpha > beta) {
-                //TESTING ONLY
-                //fprintf(fp, "\nALPHA BETA PRUNED AT AISCORE\n");
-
-                return INT_MIN;
-            }
+            if (alpha > beta) return INT_MIN;
     		j++;
     	}
     }
-
-
-    //TESTING
-    /*
-    fprintf(fp, "AT AiSCORE Depth = %d:\n", depth);
-    for (i=0; i<3; i++){
-        fprintf(fp, "\tSubScore = %d\n", negativesubscores[i], negativesubscores[i]);
-    }
-    fprintf(fp, "SELECTED SubScore = %d\n", 0 - negativesubscores[aiMaxOf3(negativesubscores)]);*/
     
     return (subscores[aiMinOf3(subscores)]);
 }
@@ -190,17 +151,7 @@ int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta)
 	aiElongate (FG.usr);
 	if (FG.usr.alive == 0) return INT_MAX/3;
     
-	if (depth >= game.depth) {
-        int score = aiVoronoi(&FG);
-	    //TESTING ONLY
-        
-        fprintf(fp, "AT AiSUBSCORE Depth = %d: (DIFFICULTY HIT)\n", game.depth);
-        //fprintf(fp, "VORONOI Score = %d\n", score);
-        
-        
-        //TEMPORARY - might be changed
-	    return score;
-    }
+	if (depth >= game.depth) return aiVoronoi(&FG);
 	
     //Now find the minimum score he's assured of.
 	int i;
@@ -210,26 +161,11 @@ int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta)
     	if (snakeIsDirectionAllowed (FG.bot, directions[i])) {
     		scores[j] = aiScore(FG, directions[i], depth, alpha, beta);
             if (alpha < scores[j]) alpha = scores[j];
-            
-            if (beta < alpha) {
-                //TESTING ONLY
-                //fprintf(fp, "\nALPHA BETA PRUNED AT AISUBSCORE\n");
-
-                return INT_MAX;
-            }
+            if (beta < alpha) return INT_MAX;
             
     		j++;
     	}
     }
-    
-    
-    //TESTING
-    /*
-    fprintf(fp, "AT AiSUBSCORE Depth = %d:\n", depth);
-    for (i=0; i<3; i++){
-        fprintf(fp, "\tScore = %d\n", scores[i], scores[i]);
-    }
-    fprintf(fp, "SELECTED Score = %d\n", scores[aiMaxOf3(scores)]);*/
 
     return scores[aiMaxOf3(scores)];
 }
@@ -237,32 +173,24 @@ int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta)
 
 
 
-
+//Calculates a score for the current game with the idea of a Voronoi diagram
 int aiVoronoi(struct future* FGptr){  
     int botcomponent, usrcomponent, result = 0;
     
+    //Set the snakes heads as free space - so as to calculate distance to them.
     FGptr->map[FGptr->usr.head.x][FGptr->usr.head.y] = FGptr->map[FGptr->bot.head.x][FGptr->bot.head.y] = 0;
+    
+    //Populate distances and get component sizes
     botcomponent = aiDijkstra(FGptr->map, FGptr->botdistancemap, FGptr->bot.head.x, FGptr->bot.head.y);
     usrcomponent = aiDijkstra(FGptr->map, FGptr->usrdistancemap, FGptr->usr.head.x, FGptr->usr.head.y);
     
-    FGptr->map[FGptr->usr.head.x][FGptr->usr.head.y] = FGptr->usr.marker;
-    FGptr->map[FGptr->bot.head.x][FGptr->bot.head.y] = FGptr->bot.marker;
-    
-    
-    if (FGptr->botdistancemap[FGptr->usr.head.x][FGptr->usr.head.y] == -1){
-        if (botcomponent > usrcomponent) {
-            result = (botcomponent - usrcomponent) * 10000;
-        }
-        //TESTING
-        //fprintf(fp, "IF THE BOT CUTS OFF THE PLAYER\nDifference in component size = %d\nBonus Score = %d\n", botcomponent - usrcomponent, result);
-    }
+    //Reward or punish, depending on component sizes - if the user & bot lie in different components.
+    if (FGptr->botdistancemap[FGptr->usr.head.x][FGptr->usr.head.y] == -1) result = (botcomponent - usrcomponent) * 10000;
+            
     int x, y;
     for (y=0; y<SCREENHEIGHT; y++){
         for (x=0; x<SCREENWIDTH; x++){
-            //VARIABLES:
-            //FGptr->botdistancemap[x][y]
-            //FGptr->usrdistancemap[x][y]
-            
+            //Reward or punish based on distances
             if (FGptr->botdistancemap[x][y] == -1) result -= 50;
             if (FGptr->usrdistancemap[x][y] == -1) result += 50;
             if ((FGptr->usrdistancemap[x][y] > 0) && (FGptr->botdistancemap[x][y] > 0)){
@@ -271,30 +199,9 @@ int aiVoronoi(struct future* FGptr){
                 result += (FGptr->usrdistancemap[x][y]) / 30;
                 result -= (FGptr->botdistancemap[x][y]) / 40;
             }
-
         }
     }
     
-    
-    //FOR TESTING
-    /*
-    fprintf(fp, "AIVORONOI CALLED\n");    
-    for (y=0; y<SCREENHEIGHT; y++){
-        for (x=0; x<SCREENWIDTH; x++){
-            //FGptr->botdistancemap[x][y]
-            //FGptr->usrdistancemap[x][y]
-            if (FGptr->botdistancemap[x][y] != FGptr->usrdistancemap[x][y]) {
-                sign = (2 * ((FGptr->botdistancemap[x][y] > 0) && (FGptr->usrdistancemap[x][y] > 0))) - 1;
-                fprintf(fp, " %3d ", sign * (2 * (FGptr->botdistancemap[x][y] < FGptr->usrdistancemap[x][y])) - 1);
-            }
-            else fprintf(fp, " %3d ", 0);
-        }
-        fprintf(fp, "\n\n");
-    }
-    fprintf(fp, "\n\n\n\n\n\n\n\n");
-    */
-    
-    //Temporarily just returning - might save this somewhere.
     return result;
 }
 
@@ -324,7 +231,6 @@ int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SC
     enqueue (&dijk_unvisited_y, start_y);
     distance[start_x][start_y] = 0;
     char temp = map[start_x][start_y];
-    map[start_x][start_y] = 0;
 
        
     while(dijk_unvisited_x.size > 0){
@@ -349,18 +255,6 @@ int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SC
             }
         }
     }
-    
-    map[start_x][start_y] = temp;
-    
-    //FOR TESTING
-    /*fprintf(fp, "\n\n***DJIKSTRA***\n\tComponent Size = %d\n\n", componentsize);
-    for (y=0; y<SCREENHEIGHT; y++){
-        for (x=0; x<SCREENWIDTH; x++){
-            fprintf(fp, "%c(%3d)  ", map[x][y], distance[x][y]);
-        }
-        fprintf(fp, "\n\n");
-    }
-    fprintf(fp, "\n\n\n\n\n\n\n");*/
     
     
     return componentsize;

@@ -21,8 +21,6 @@ FILE: ai.h
 
 extern int doneflag;
 
-//TESTING
-extern FILE* fp;
 
 #include "engine.h"
 #include "snake.h"
