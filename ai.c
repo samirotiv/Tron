@@ -27,15 +27,10 @@ int doneflag;
 //Global Misc. Variables
 int directions[] = {LEFT, UP, RIGHT, DOWN};
 
-//Djikstra's Algorithm Variables
+//Dijkstra's Algorithm Variables
 queue dijk_unvisited_x, dijk_unvisited_y;
 int dijk_unvisited_x_arr[MAXSQUARES], dijk_unvisited_y_arr[MAXSQUARES];
 int dijk_seq[4] = {0, 0, 1, -1}; 
-
-
-//TODO: IMPLEMENT GAME DIFFICULTY THROUGH MENUS
-
-
 
 
 /*
@@ -255,7 +250,6 @@ int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SC
             }
         }
     }
-    
-    
+        
     return componentsize;
 }

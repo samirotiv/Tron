@@ -6,9 +6,10 @@
 #define MENUBOXHEIGHT 10
 #define MENUBOXSTARTX (SCREENWIDTH - MENUBOXWIDTH )/2
 #define MENUBOXSTARTY 10
-#define MENUTEXTSTARTX MENUBOXSTARTX + 5
-#define MENUTEXTSTARTY 12
-
+#define MENUTEXTSTARTX (LOGOSTARTX + 22)
+#define MENUTEXTSTARTY (LOGOSTARTY + 12 )
+#define GAMEMODESTARTX (LOGOSTARTX+2)
+#define GAMEMODESTARTY (LOGOSTARTY + 12)
 
 #define ENDBOXWIDTH 30
 #define ENDBOXHEIGHT 10
@@ -20,13 +21,18 @@
 
 #define RESTART 1
 #define QUITTOMENU 2
+
+#define LOGOSTARTX ((SCREENWIDTH - 70)/2)
+#define LOGOSTARTY 2
+
 void menuMainMenu();
-int menuGetInput(int* );
+int menuGetInput( int*, int*);
 void menuStartAtrribute (int );
 
 void menuEndPrint(int highlight);
 void menuEndGame();
 
 void menuPauseGame();
+void menuPrintWinner();
 
 #endif
