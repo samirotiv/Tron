@@ -9,6 +9,7 @@ FILE: snake.h
 
 #ifndef SNAKE_DEFINED
 #define SNAKE_DEFINED
+
 #include "engine.h"
 
 //..################_________---GLOBAL SNAKE STRUCTURE---_________###############

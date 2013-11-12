@@ -18,8 +18,10 @@ FILE: main.c
 
 void SinglePlayerGame();
 void TwoPlayerGame();
-
 void ExitGame();
+
+//From engine.c
+void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer, long int usleeptime);
 
 
 

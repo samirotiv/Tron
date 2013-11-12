@@ -14,13 +14,13 @@ FILE: engine.c
 #include <errno.h>
 #include <unistd.h>
 
-#include "engine.h"
 #include "snake.h"
+#include "engine.h"
 #include "ai.h"
 
 struct gamestructure game;
 
-
+void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer, long int usleeptime);
 
 
 /*
@@ -131,20 +131,20 @@ void engineDrawWalls(){
     //Draw vertical walls
     int y;
     for (y=0; y<SCREENHEIGHT; y++){
-        engineAddChar (0, y, WALL);
+        engineAddChar (0, y, WALLCHAR);
         game.map[0][y] = WALL;
         
-        engineAddChar (SCREENWIDTH - 1, y, WALL);
+        engineAddChar (SCREENWIDTH - 1, y, WALLCHAR);
         game.map[SCREENWIDTH-1][y] = WALL;
     }
 
     //Draw horizontal walls
     int x;
     for (x=0; x<SCREENWIDTH; x++){
-        engineAddChar (x, 0, WALL);
+        engineAddChar (x, 0, WALLCHAR);
         game.map[x][0] = WALL;
         
-        engineAddChar (x, SCREENHEIGHT - 1, WALL);
+        engineAddChar (x, SCREENHEIGHT - 1, WALLCHAR);
         game.map[x][SCREENHEIGHT-1] = WALL;
     }
 
@@ -217,9 +217,7 @@ void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakes
     doneflag = 0;
     pthread_create(&aithread, NULL, aiProcessGame, snakes);
     
-    timeout.tv_sec = usleeptime / 1000000;
-    timeout.tv_nsec = (usleeptime % 1000000) * 1000;
-    nanosleep(&timeout, NULL);
+    usleep(usleeptime);
     
     error = pthread_cancel(aithread);    
     error = pthread_join(aithread, &exitstatus);

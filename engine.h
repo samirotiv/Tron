@@ -10,6 +10,7 @@ FILE: engine.h
 #ifndef ENGINE_DEFINED
 #define ENGINE_DEFINED
 
+
 //MUST NOT BE SMALLER THAN 24X80
 //MUST BE A CONSTANT THAT CAN BE EVALUATED AT COMPILE TIME
 #define SCREENHEIGHT 24
@@ -17,9 +18,13 @@ FILE: engine.h
 //Max squares = SCRHEIGHT * SCRWIDTH
 #define MAXSQUARES (SCREENHEIGHT * SCREENWIDTH)
 
+//For internal game map
 #define WALL 'W'
-#define SNAKEHEAD '@'
-#define SNAKEBODY '#'
+
+//For display
+#define WALLCHAR ' '
+#define SNAKEHEAD ' '
+#define SNAKEBODY ' '
 
 
 //ALL GAME COLORCODES
@@ -72,7 +77,7 @@ void engineClearMap();
 void engineStartGameEnvironment();
 void engineStartMenuEnvironment();
 void engineProcessGameWinner();
-//void engineSleepAndCallBot(struct snakestructure*, long int);
+//void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer, long int usleeptime);
 
 
 

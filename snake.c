@@ -9,6 +9,7 @@ FILE: snake.c
 
 #include "snake.h"
 #include "engine.h"
+#include "curses.h"
 
 struct snakestructure snake1;
 struct snakestructure snake2;

@@ -1,6 +1,7 @@
 #include <curses.h>
 #include "menu.h"
 #include "engine.h"
+#include "tron.h"
 
 enum Colors { BLACK_WHITE = 1, CYAN_BLACK, BLUE_BLACK,
               WHITE_BLACK, GREEN_BLACK, RED_BLACK  , YELLOW_BLACK, BORDER};
@@ -100,7 +101,7 @@ engineAddStr( LOGOSTARTX, LOGOSTARTY + 9, "      8 8888       8 8888     `88.   
             }
             
             attron( A_DIM);
-            enginePrintF(SCREENWIDTH - 22, SCREENHEIGHT - 1, "P: Pause      Q: Quit");
+            enginePrintF(SCREENWIDTH - 51, SCREENHEIGHT - 1, "Space/Enter: Start Game      P: Pause      Q: Quit");
     
             attrset(COLOR_PAIR(YELLOW_BLACK));
             attron( A_BOLD);
@@ -278,7 +279,7 @@ void menuEndGame()
 				if(highlight == RESTART)
 					highlight = QUITTOMENU;
 				break;
-			case 10:
+			case 10:    case ' ':
 				choice = highlight;
 				break;
 			case 'q':	case 'Q':
