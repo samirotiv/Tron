@@ -25,7 +25,6 @@ void ExitGame();
 
 
 int main(){
-
     engineInit();
     menuMainMenu();
 
@@ -37,6 +36,9 @@ int main(){
 
 void TwoPlayerGame(){
     engineStartGameEnvironment();
+    game.state = TWOPLAYERGAME;
+    
+    //Creating our own input buffer to ensure responsive input
     int c, new_direction;
 
     queue player1buffer, player2buffer;
@@ -126,7 +128,9 @@ void SinglePlayerGame(){
     game.difficulty = DIFFICULTY;
     
     engineStartGameEnvironment();
+    game.state = SINGLEPLAYERGAME;
     
+    //Creating our own input buffer to ensure responsive input.
     int c, new_direction;
     
     queue player1buffer;

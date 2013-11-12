@@ -44,10 +44,15 @@ struct gamestructure {
     char map[SCREENWIDTH][SCREENHEIGHT];
 };
 
+//Game States
+#define SINGLEPLAYERGAME 1
+#define TWOPLAYERGAME 2
+#define PAUSED 3
+#define MAIN_MENU 4
+#define END_MENU 5
 
 
 //TODO: CREATE A FUNCTION
-//#define GAMEDELAY 200000
 #define GAMEDELAY 150000
 #define MAXKEYBUFFERSIZE 3
 #define ENGINETIMEOUTCOUNTER 30

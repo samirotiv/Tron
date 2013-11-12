@@ -18,9 +18,6 @@ void snakeInit(){
 
     SetPoint (snake1.head, SNAKE1_STARTX, SNAKE1_STARTY);
     SetPoint (snake2.head, SNAKE2_STARTX, SNAKE2_STARTY);
-    
-    EquatePoint (snake1.position[0], snake1.head);
-    EquatePoint (snake2.position[0], snake2.head);
 
     snake1.marker = SNAKE1_MARKER;
     snake2.marker = SNAKE2_MARKER;

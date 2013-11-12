@@ -61,7 +61,6 @@ int aiVoronoi(struct future* FGptr);
                     FG.map[m_snake.head.x][m_snake.head.y] = m_snake.marker;             \
                     m_snake.size++;                                                         \
                                                                                             \
-                    EquatePoint (m_snake.position[m_snake.size - 1], m_snake.head);         \
                 }
 
 

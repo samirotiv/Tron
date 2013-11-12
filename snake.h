@@ -42,7 +42,6 @@ struct snakestructure {
     char alive;
     
     struct point head;
-    struct point position[MAXSNAKESIZE]; //Insurance
 
     int direction;
     int size;
@@ -88,7 +87,6 @@ void snakeInit();
                     engineAddCharFromPoint (m_snake.head, SNAKEHEAD);                       \
                     m_snake.size++;                                                         \
                                                                                             \
-                    EquatePoint (m_snake.position[m_snake.size - 1], m_snake.head);         \
                 }
                 
 
