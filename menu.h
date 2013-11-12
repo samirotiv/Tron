@@ -27,5 +27,6 @@ void menuStartAtrribute (int );
 void menuEndPrint(int highlight);
 void menuEndGame();
 
+void menuPauseGame();
 
 #endif

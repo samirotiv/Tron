@@ -2,10 +2,8 @@
 #include "menu.h"
 #include "engine.h"
 
-enum gamemodes { ONE_PLAYER, TWO_PLAYERS, BOT_VS_BOT};
 enum Colors { BLACK_WHITE = 1, CYAN_BLACK, BLUE_BLACK,
               WHITE_BLACK, GREEN_BLACK, RED_BLACK  };
-enum gamestates { MAIN_MENU, GAME, PAUSED, END_MENU };             
 
 int gamemode;
 
@@ -14,6 +12,8 @@ void menuMainMenu(){
     char speed_options[9] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 	int option_row_pos = MENUTEXTSTARTX + 17;
+	
+	gamemode = SINGLEPLAYERGAME;
 
 	int wait;
 	int i;
@@ -71,7 +71,7 @@ void menuMainMenu(){
     
     		// Draw the game mode
     		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+3, "Game Mode:");
-    		if (gamemode == ONE_PLAYER)
+    		if (gamemode == SINGLEPLAYERGAME)
     		{
     			menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
     			engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+4, "One Player");
@@ -113,14 +113,13 @@ void menuMainMenu(){
     	}
     
     	game.difficulty = current_speed;
-    	game.state = GAME;
+    	game.state = gamemode;
     	//Turns off all attributes
     	standend();
     	
     	
-    	while (gamemode == ONE_PLAYER && game.state == GAME)    SinglePlayerGame();
-    	//else if (gamemode == BOT_VS_BOT) BotAgainstBot();
-    	while (gamemode == TWO_PLAYERS && game.state == GAME)     TwoPlayerGame();
+    	while (game.state == SINGLEPLAYERGAME)    SinglePlayerGame();
+    	while (game.state == TWOPLAYERGAME)     TwoPlayerGame();
     }
 }
 
@@ -145,13 +144,13 @@ int menuGetInput(int* speed_cur_option)
 		break;
 
 	case KEY_UP: 
-		if (gamemode == TWO_PLAYERS)
-			gamemode = ONE_PLAYER;
+		if (gamemode == TWOPLAYERGAME)
+			gamemode = SINGLEPLAYERGAME;
 		break;
 
 	case KEY_DOWN:
-		if (gamemode == ONE_PLAYER)
-			gamemode = TWO_PLAYERS;
+		if (gamemode == SINGLEPLAYERGAME)
+			gamemode = TWOPLAYERGAME;
 		break;
 
 	case KEY_LEFT:
@@ -197,7 +196,6 @@ void menuEndGame()
 	int c;
 
 	engineStartMenuEnvironment();	//set delay for menu
-	game.state = END_MENU;		
 	
 	menuEndPrint(highlight);
 	while(1)
@@ -216,13 +214,15 @@ void menuEndGame()
 			case 10:
 				choice = highlight;
 				break;
+			case 'q':	case 'Q':
+                    ExitGame();
+                    break;
 			default:
 				refresh();
 				//break;
 		}
 		menuEndPrint(highlight);
 		if(choice == 1){	    /* Player chose to restart*/
-		    game.state = GAME;
 			//Turn off all attributes
 			standend();
 			break;
@@ -248,10 +248,10 @@ void menuEndPrint(int highlight)
 {
 	int x, y, i;
 	char *choices[] = { 
-			"RESTART",
-			"MAIN MENU",
+			"PLAY AGAIN.!",
+			"BACK TO MENU",
 		  };
-	int size_choices[] = { 7, 9};
+	int size_choices[] = { 12, 12};
 	
 	engineAddStr( ENDBOXSTARTX, ENDBOXSTARTY," ____________________________ ");
 	for ( i=1; i<= ENDBOXHEIGHT ; i++){
@@ -273,10 +273,19 @@ void menuEndPrint(int highlight)
 			enginePrintF( x, y, "%s", choices[i]);
 	}
 	attron( A_BOLD);
-	if (game.winner !=0 )
-		enginePrintF( (ENDBOXWIDTH - 16)/2 + ENDBOXSTARTX, ENDBOXENDY-1,"PLAYER %d WINS!!!", game.winner);
+	if (game.winner == 1 )
+		enginePrintF( (ENDBOXWIDTH - 18)/2 + ENDBOXSTARTX, ENDBOXENDY-1,"BLUE SNAKE WINS!!!");
+	else if (game.winner == 2 )
+		enginePrintF( (ENDBOXWIDTH - 17)/2 + ENDBOXSTARTX, ENDBOXENDY-1,"RED SNAKE WINS!!!");
 	else
 		enginePrintF( (ENDBOXWIDTH - 9)/2 + ENDBOXSTARTX, ENDBOXENDY-1,"DRAW GAME");
 	attroff( A_BOLD);
 	refresh();
+}
+
+
+void menuPauseGame(){
+    nodelay(stdscr, FALSE);
+    getch();
+    nodelay(stdscr, TRUE);
 }

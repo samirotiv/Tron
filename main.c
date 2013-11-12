@@ -90,8 +90,8 @@ void TwoPlayerGame(){
                     break;
 
                 case 'p':	case 'P':
-				    //Pause
-				    break;
+                    menuPauseGame();
+                    break;
 
                 default:
                     break;
@@ -136,6 +136,8 @@ void SinglePlayerGame(){
     queue player1buffer;
     int buffer1[MAXKEYBUFFERSIZE];
     InitQueue(&player1buffer, buffer1, MAXKEYBUFFERSIZE);
+    WINDOW *temp;   //Useful to store screen before pausing
+    temp = (WINDOW*) malloc( sizeof(WINDOW));
     
     while((snake1.alive == 1) && (snake2.alive == 1)){
         engineSleepAndCallBot(&snake2, &snake1, GAMEDELAY);
@@ -166,7 +168,7 @@ void SinglePlayerGame(){
                     break;
 
                 case 'p':	case 'P':
-                    //Pause
+                    menuPauseGame();
                     break;
 
                 default:
