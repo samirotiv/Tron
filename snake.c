@@ -13,6 +13,14 @@ FILE: snake.c
 struct snakestructure snake1;
 struct snakestructure snake2;
 
+
+/*
+*********************************************************************
+FUNCTION: snakeInit
+    Initialises the positions and colors and details of the snakes
+
+*********************************************************************
+*/
 void snakeInit(){
     snake1.size = snake1.alive = snake2.size = snake2.alive = 1;
 

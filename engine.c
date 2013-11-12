@@ -65,7 +65,14 @@ void engineInit(){
 
 
 
+/*
+*********************************************************************
+FUNCTION: engineStartGameEnvironment
+    Sets the input options and sets the game environment (drawing
+    walls, etc.)
 
+*********************************************************************
+*/
 void engineStartGameEnvironment(){
     nodelay(stdscr, TRUE);
     engineClearMap();
@@ -88,7 +95,13 @@ void engineStartGameEnvironment(){
     return;
 }
 
+/*
+*********************************************************************
+FUNCTION: engineStartMenuEnvironment
+    Sets the input options and sets the menu environment.
 
+*********************************************************************
+*/
 void engineStartMenuEnvironment(){
     nodelay(stdscr, FALSE);
 
@@ -101,7 +114,13 @@ void engineStartMenuEnvironment(){
 
 
 
+/*
+*********************************************************************
+FUNCTION: engineDrawWalls
+    Draws game walls and updates internal game map
 
+*********************************************************************
+*/
 void engineDrawWalls(){
     //Clear screen
     attrset(COLOR_PAIR(OUTSIDE_COLORCODE));
@@ -133,7 +152,13 @@ void engineDrawWalls(){
 }
 
 
+/*
+*********************************************************************
+FUNCTION: engineClearMap
+    Clears the internal game map
 
+*********************************************************************
+*/
 void engineClearMap(){
     int i, j;
     for (i=0; i<SCREENWIDTH; i++){
@@ -143,7 +168,13 @@ void engineClearMap(){
     }
 }
 
+/*
+*********************************************************************
+FUNCTION: engineProcessGameWinner
+    Processes the game and sets the winner or checks if it's a draw
 
+*********************************************************************
+*/
 void engineProcessGameWinner(){
     //Handle the special case of head-to-head collisions
     if ((snake1.head.x == snake2.head.x) && (snake1.head.y == snake2.head.y)) snake1.alive = snake2.alive = 0;
@@ -159,7 +190,14 @@ void engineProcessGameWinner(){
 
 
 
+/*
+*********************************************************************
+FUNCTION: engineSleepAndCallBot
+    Spawns a seperate thread amd executes the bot function in this
+    thread and kills it when the game timer elapses
 
+*********************************************************************
+*/
 void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer, long int usleeptime){
     struct timespec timeout;
     pthread_t aithread;
@@ -183,30 +221,17 @@ void engineSleepAndCallBot(struct snakestructure* botsnakepointer, struct snakes
     timeout.tv_nsec = (usleeptime % 1000000) * 1000;
     nanosleep(&timeout, NULL);
     
-    //FOR TESTING ONLY
-    //DISABLED KILL FOR TESTING
     error = pthread_cancel(aithread);    
     error = pthread_join(aithread, &exitstatus);
     
     if (doneflag == 1) {
-        //FOR TESTING ONLY        
-        enginePrintF (5, SCREENHEIGHT + 1, "THREAD FINISHED SUCCESSFULLY");
-        
         if (counter > 0) counter--;
         else if (game.depth < game.difficulty) game.depth++;
-        }
+    }
     if (doneflag == 0) {
-        //FOR TESTING ONLY
-        enginePrintF (5, SCREENHEIGHT + 1, "THREAD ABORTED, IT SEEMS    ");
-        
         counter = ENGINETIMEOUTCOUNTER;
         game.depth--;
-        }
-    
-    //FOR TESTING ONLY
-    enginePrintF (5, SCREENHEIGHT + 2, "COUNTER = %d  ", counter);
-    enginePrintF (5, SCREENHEIGHT + 3, "DEPTH = %d  ", game.depth);
-    enginePrintF (5, SCREENHEIGHT + 4, "DIFFICULTY = %d  ", game.difficulty);
+    }
     
     return;
 }

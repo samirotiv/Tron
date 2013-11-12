@@ -46,6 +46,8 @@ FUNCTION: aiProcessGame
     
     (Refer to pthread man pages for a list of CANCELLATION POINTS)
     
+    @param data: A pointer to an array of 2 snakes.
+    
 *********************************************************************
 */
 void *aiProcessGame(void *data){    
@@ -62,7 +64,7 @@ void *aiProcessGame(void *data){
     //After Processing:
     //Ensure that a cancel doesn't take place here.
     pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
-    pthread_cleanup_push(pthread_mutex_unlock, (void *) &processing);
+    pthread_cleanup_push(aiUnlockMutex, (void *) &processing);
     pthread_mutex_lock(&processing);
     
     doneflag = 1;
@@ -74,8 +76,29 @@ void *aiProcessGame(void *data){
 }
 
 
-//Returns the best direction to go
-//Use 'botsnake' to dereference botsnakepointer.
+
+/*
+*********************************************************************
+FUNCTION: aiUnlockMutex
+    Wrapper non-returning function that accepts a void pointer
+    and unlocks a mutex.
+
+*********************************************************************
+*/
+void aiUnlockMutex( void *data){
+    pthread_mutex_unlock((pthread_mutex_t *)data);
+    return;
+}
+
+
+/*
+*********************************************************************
+FUNCTION: aiMinimax
+    Returns the best direction to go using the minimax algorithm.
+
+*********************************************************************
+*/
+
 int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer){
 	//Start MINIMAX
    	struct future FG; 
@@ -109,9 +132,14 @@ int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usr
 
 
 
+/*
+*********************************************************************
+FUNCTION: aiScore
+    Returns the minimum score the maximizing player (bot) is assured 
+    of - for a certain move by the bot.
 
-/*Recursive function to find score of a direction*/
-//Returns the minimum score the maximizing player (bot) is assured of - for a certain move by the bot.
+*********************************************************************
+*/
 int aiScore( struct future FG, int direction, int depth, int alpha, int beta){
     //Move the maximizing player (bot) in the specified direction
 	snakeUpdateDirection (FG.bot, direction);
@@ -138,8 +166,14 @@ int aiScore( struct future FG, int direction, int depth, int alpha, int beta){
 
 
 
-/*Recursive function to find subscore of a direction*/
-//Returns the maximum score the minimizing player (human) is assured of - for a specified move of the player
+/*
+*********************************************************************
+FUNCTION: aiSubScore
+    Returns the maximum score the minimizing player (human) is 
+    assured of - for a specified move of the player
+
+*********************************************************************
+*/
 int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta){
     //Move the minimizing player (human) in the specified direction
 	snakeUpdateDirection (FG.usr, direction);
@@ -167,8 +201,30 @@ int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta)
 
 
 
+/*
+*********************************************************************
+FUNCTION: aiVoronoi
+    Calculates a score for the current game with the idea of a 
+    Voronoi diagram.
+    
+    In brief, a Voronoi diagram is a diagram showing the regions of
+    a map that are closest to a given player.
+    
+    The bot tries to maximise the number of squares that are closer
+    to it, and minimise the regions closer to the player.
+    
+    It also tries to minimise the sum of distances of all squares
+    from it, and maximize the sum of distances of all squares from
+    the player.
+    
+    In case the player is going to get cut off from the bot, it 
+    checks the sizes of their respective components.
+    
+    (Dijkstra's algorithm is used here to calculate distances and
+    sizes of components)
 
-//Calculates a score for the current game with the idea of a Voronoi diagram
+*********************************************************************
+*/
 int aiVoronoi(struct future* FGptr){  
     int botcomponent, usrcomponent, result = 0;
     
@@ -202,8 +258,21 @@ int aiVoronoi(struct future* FGptr){
 
 
 
-//For a map of dimension SCREENWIDTH x SCREENHEIGHT, with walls as borders ONLY.
-//Returns the size of the component
+
+/*
+*********************************************************************
+FUNCTION: aiVoronoi
+    For a map of dimension SCREENWIDTH x SCREENHEIGHT, with walls as 
+    borders ONLY.
+    
+    This is a fast implementation of Dijkstra's algorithm, using 
+    queues. This is easily possible because of the 'square-grid'
+    nature of the map.
+    
+    Returns the size of the component.
+
+*********************************************************************
+*/
 int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y){
     //Note that -1 is a distance of infinity
     int x, y;

@@ -42,6 +42,8 @@ int aiSubScore( struct future futuregame, int direction, int depth, int alpha, i
 int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SCREENHEIGHT], int start_x, int start_y);
 int aiVoronoi(struct future* FGptr);
 
+void aiUnlockMutex(void*);
+
 
 #define aiMaxOf3(m_arr) ( m_arr[2]>m_arr[((m_arr[1]>m_arr[0])?1:0)])?2:((m_arr[1]>m_arr[0])?1:0)
 

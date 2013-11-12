@@ -53,7 +53,6 @@ struct gamestructure {
 #define END_MENU 5
 
 
-//TODO: CREATE A FUNCTION
 #define GAMEDELAY (50000 * (5 - game.speed))
 #define MAXKEYBUFFERSIZE 3
 #define ENGINETIMEOUTCOUNTER 30

@@ -32,6 +32,15 @@ int main(){
 }
 
 
+
+
+/*
+*********************************************************************
+FUNCTION: TwoPlayerGame
+    Runs a two player game of tron
+
+*********************************************************************
+*/
 void TwoPlayerGame(){
     engineStartGameEnvironment();
     game.state = TWOPLAYERGAME;
@@ -110,10 +119,7 @@ void TwoPlayerGame(){
         refresh();
     }
     
-    //TESTING ONLY
-    //To read debugging text
-    attrset(COLOR_PAIR(OUTSIDE_COLORCODE));
-    
+   
     //POST GAME PROCESSING
     engineProcessGameWinner();
     menuPrintWinner();
@@ -123,7 +129,13 @@ void TwoPlayerGame(){
 }
 
 
+/*
+*********************************************************************
+FUNCTION: SinglePlayerGame
+    Runs a single player game of tron against a bot
 
+*********************************************************************
+*/
 void SinglePlayerGame(){
         
     engineStartGameEnvironment();
@@ -184,10 +196,6 @@ void SinglePlayerGame(){
         snakeElongate (snake1);
         snakeElongate (snake2);
         
-        //TESTING ONLY
-        //To read debugging text
-        attrset(COLOR_PAIR(OUTSIDE_COLORCODE));
-        
         refresh();
     }
     
@@ -201,7 +209,13 @@ void SinglePlayerGame(){
 
 }
 
+/*
+*********************************************************************
+FUNCTION: ExitGame
+    Restores the terminal prompt and exits the program
 
+*********************************************************************
+*/
 void ExitGame(){
     endwin();
     exit(0);

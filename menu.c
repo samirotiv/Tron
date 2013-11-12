@@ -7,6 +7,14 @@ enum Colors { BLACK_WHITE = 1, CYAN_BLACK, BLUE_BLACK,
 
 int gamemode;
 
+
+/*
+*********************************************************************
+FUNCTION: menuMainMenu
+    Renders the main menu and calls the appropriate game function
+
+*********************************************************************
+*/
 void menuMainMenu(){
     int current_speed = 3;
     int current_difficulty = 2;
@@ -44,7 +52,7 @@ void menuMainMenu(){
     		init_pair (BLUE_BLACK,  COLOR_BLUE,  bg_color);
     		init_pair (BLACK_WHITE, COLOR_BLACK, COLOR_WHITE);
     		init_pair (YELLOW_BLACK,  COLOR_YELLOW,  bg_color);
-    		init_pair (BORDER,  COLOR_BLUE,  COLOR_BLUE);
+    		init_pair (BORDER,  COLOR_WHITE,  COLOR_BLUE);
     	}
         
     	while (wait == TRUE)
@@ -90,7 +98,9 @@ engineAddStr( LOGOSTARTX, LOGOSTARTY + 9, "      8 8888       8 8888     `88.   
                 
                 engineAddChar (x, SCREENHEIGHT - 1, ' ');
             }
-
+            
+            attron( A_DIM);
+            enginePrintF(SCREENWIDTH - 22, SCREENHEIGHT - 1, "P: Pause      Q: Quit");
     
             attrset(COLOR_PAIR(YELLOW_BLACK));
             attron( A_BOLD);
@@ -182,8 +192,13 @@ engineAddStr( LOGOSTARTX, LOGOSTARTY + 9, "      8 8888       8 8888     `88.   
 
 
 
-/**	Gets the input for the main menu.
- */
+/*
+*********************************************************************
+FUNCTION: menuGetInput
+    Gets main menu input
+
+*********************************************************************
+*/
 int menuGetInput(int* speed_cur_option, int* diff_cur_option)
 {
 	nodelay (stdscr, FALSE);
@@ -232,7 +247,13 @@ int menuGetInput(int* speed_cur_option, int* diff_cur_option)
 
 
 
+/*
+*********************************************************************
+FUNCTION: menuEndGame
+    Renders end game menu
 
+*********************************************************************
+*/
 void menuEndGame()
 {	
 	int highlight = 1;
@@ -283,9 +304,12 @@ void menuEndGame()
 }
 
 /*
- * Function to print end game menu
- * @param the choice to be highlighted
- */
+*********************************************************************
+FUNCTION: menuEndPrint
+    Prints the end game menu
+
+*********************************************************************
+*/
 void menuEndPrint(int highlight)
 {
 	int x, y, i;
@@ -332,7 +356,13 @@ void menuEndPrint(int highlight)
 	refresh();
 }
 
+/*
+*********************************************************************
+FUNCTION: menuPrintWinner
+    Prints the winner on the screen
 
+*********************************************************************
+*/
 void menuPrintWinner(){
     init_pair (RED_BLACK,   COLOR_RED,   COLOR_BLACK);
     init_pair (BLUE_BLACK,  COLOR_BLUE,  COLOR_BLACK);
@@ -349,7 +379,13 @@ void menuPrintWinner(){
 	refresh();
 }
 
+/*
+*********************************************************************
+FUNCTION: menuPauseGame
+    Pauses the game
 
+*********************************************************************
+*/
 void menuPauseGame(){
     nodelay(stdscr, FALSE);
     getch();
