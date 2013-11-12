@@ -25,8 +25,6 @@ void ExitGame();
 
 
 int main(){
-//STRICTLY TEMPORARY - TESTING ONLY
-fp = fopen ("err.txt", "w");
 
     engineInit();
     menuMainMenu();
