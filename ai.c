@@ -194,7 +194,7 @@ int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta)
         int score = aiVoronoi(&FG);
 	    //TESTING ONLY
         
-        fprintf(fp, "AT AiSUBSCORE Depth = %d: (DIFFICULTY HIT)\n", game.depth);
+        //fprintf(fp, "AT AiSUBSCORE Depth = %d: (DIFFICULTY HIT)\n", game.depth);
         //fprintf(fp, "VORONOI Score = %d\n", score);
         
         
@@ -242,17 +242,13 @@ int aiVoronoi(struct future* FGptr){
     int botcomponent, usrcomponent, result = 0;
     
     FGptr->map[FGptr->usr.head.x][FGptr->usr.head.y] = FGptr->map[FGptr->bot.head.x][FGptr->bot.head.y] = 0;
+    
     botcomponent = aiDijkstra(FGptr->map, FGptr->botdistancemap, FGptr->bot.head.x, FGptr->bot.head.y);
     usrcomponent = aiDijkstra(FGptr->map, FGptr->usrdistancemap, FGptr->usr.head.x, FGptr->usr.head.y);
     
-    FGptr->map[FGptr->usr.head.x][FGptr->usr.head.y] = FGptr->usr.marker;
-    FGptr->map[FGptr->bot.head.x][FGptr->bot.head.y] = FGptr->bot.marker;
-    
     
     if (FGptr->botdistancemap[FGptr->usr.head.x][FGptr->usr.head.y] == -1){
-        if (botcomponent > usrcomponent) {
             result = (botcomponent - usrcomponent) * 10000;
-        }
         //TESTING
         //fprintf(fp, "IF THE BOT CUTS OFF THE PLAYER\nDifference in component size = %d\nBonus Score = %d\n", botcomponent - usrcomponent, result);
     }
@@ -323,8 +319,6 @@ int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SC
     enqueue (&dijk_unvisited_x, start_x);
     enqueue (&dijk_unvisited_y, start_y);
     distance[start_x][start_y] = 0;
-    char temp = map[start_x][start_y];
-    map[start_x][start_y] = 0;
 
        
     while(dijk_unvisited_x.size > 0){
@@ -350,7 +344,6 @@ int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SC
         }
     }
     
-    map[start_x][start_y] = temp;
     
     //FOR TESTING
     /*fprintf(fp, "\n\n***DJIKSTRA***\n\tComponent Size = %d\n\n", componentsize);
