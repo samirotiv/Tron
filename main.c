@@ -32,8 +32,6 @@ int main(){
 }
 
 
-
-
 void TwoPlayerGame(){
     engineStartGameEnvironment();
     game.state = TWOPLAYERGAME;
@@ -118,15 +116,16 @@ void TwoPlayerGame(){
     
     //POST GAME PROCESSING
     engineProcessGameWinner();
+    menuPrintWinner();
+    usleep(3000000);
     menuEndGame();
+    return;
 }
 
 
 
 void SinglePlayerGame(){
-    //TEMPORARY
-    game.difficulty = DIFFICULTY;
-    
+        
     engineStartGameEnvironment();
     game.state = SINGLEPLAYERGAME;
     
@@ -136,8 +135,7 @@ void SinglePlayerGame(){
     queue player1buffer;
     int buffer1[MAXKEYBUFFERSIZE];
     InitQueue(&player1buffer, buffer1, MAXKEYBUFFERSIZE);
-    WINDOW *temp;   //Useful to store screen before pausing
-    temp = (WINDOW*) malloc( sizeof(WINDOW));
+    player1buffer.lastenqueued = SNAKE1_STARTDIRECTION;
     
     while((snake1.alive == 1) && (snake2.alive == 1)){
         engineSleepAndCallBot(&snake2, &snake1, GAMEDELAY);
@@ -195,7 +193,11 @@ void SinglePlayerGame(){
     
     //POST GAME PROCESSING
     engineProcessGameWinner();
+    menuPrintWinner();
+    
+    usleep(3000000);
     menuEndGame();
+    return;
 
 }
 
