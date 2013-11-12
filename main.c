@@ -112,6 +112,10 @@ void TwoPlayerGame(){
         refresh();
     }
     
+    //TESTING ONLY
+    //To read debugging text
+    attrset(COLOR_PAIR(OUTSIDE_COLORCODE));
+    
     //POST GAME PROCESSING
     engineProcessGameWinner();
     menuEndGame();

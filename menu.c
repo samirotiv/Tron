@@ -5,6 +5,7 @@
 enum gamemodes { ONE_PLAYER, TWO_PLAYERS, BOT_VS_BOT};
 enum Colors { BLACK_WHITE = 1, CYAN_BLACK, BLUE_BLACK,
               WHITE_BLACK, GREEN_BLACK, RED_BLACK  };
+enum gamestates { MAIN_MENU, GAME, PAUSED, END_MENU };             
 
 int gamemode;
 
@@ -14,109 +15,113 @@ void menuMainMenu(){
 
 	int option_row_pos = MENUTEXTSTARTX + 17;
 
-	int wait = TRUE;
+	int wait;
 	int i;
 	int j;
 
-	clear ();
-	
-	if (has_colors () == TRUE)
-	{
-		int bg_color;
+	while(1){   //Testing returning to main menu
+    	wait = TRUE;
+	    clear ();
+    	game.state = MAIN_MENU;
+    	if (has_colors () == TRUE)
+	    {
+	    	int bg_color;
 
-		start_color ();
-		if (use_default_colors () == ERR)
-			bg_color = COLOR_BLACK;
-		else
-			bg_color = -1;
+    		start_color ();
+    		if (use_default_colors () == ERR)
+    			bg_color = COLOR_BLACK;
+    		else
+    			bg_color = -1;
 
-		// Start support for colors (Name, Foreground, Background)
-		init_pair (GREEN_BLACK, COLOR_GREEN, bg_color);
-		init_pair (CYAN_BLACK,  COLOR_CYAN,  bg_color);
-		init_pair (WHITE_BLACK, COLOR_WHITE, bg_color);
-		init_pair (RED_BLACK,   COLOR_RED,   bg_color);
-		init_pair (BLUE_BLACK,  COLOR_BLUE,  bg_color);
-		init_pair (BLACK_WHITE, COLOR_BLACK, bg_color);
-	}
+    		// Start support for colors (Name, Foreground, Background)
+    		init_pair (GREEN_BLACK, COLOR_GREEN, bg_color);
+    		init_pair (CYAN_BLACK,  COLOR_CYAN,  bg_color);
+    		init_pair (WHITE_BLACK, COLOR_WHITE, bg_color);
+    		init_pair (RED_BLACK,   COLOR_RED,   bg_color);
+    		init_pair (BLUE_BLACK,  COLOR_BLUE,  bg_color);
+    		init_pair (BLACK_WHITE, COLOR_BLACK, bg_color);
+    	}
 
-	while (wait == TRUE)
-	{
-		// Draw the borders
-		menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
-		for (i = 0; i < SCREENWIDTH; i++)
-		{
-			engineAddChar(i, 0, MENUBORDER);
-			engineAddChar(i ,SCREENHEIGHT - 1, MENUBORDER);
-		}
-		for (i = 0; i < SCREENHEIGHT; i++)
-		{
-			engineAddChar (0, i, MENUBORDER);
-			engineAddChar (SCREENWIDTH - 1, i, MENUBORDER);
-		}
-		menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
-		engineAddStr(MENUBOXSTARTX, MENUBOXSTARTY, " ___________________________________________________ ");
-		
-		for(i=MENUBOXSTARTY+1 ; i<=MENUBOXSTARTY+11 ; i++){
-		    engineAddStr(MENUBOXSTARTX, i, "|                                                   |");
-		} 
-		    
-		engineAddStr(MENUBOXSTARTX, MENUBOXSTARTY+12, "|___________________________________________________|");
-
-		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY, "Press <enter> or <space> to start game");
-
-		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+1, "Press <q> to quit game");
-
-		// Draw the game mode
-		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+3, "Game Mode:");
-		if (gamemode == ONE_PLAYER)
-		{
-			menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
-			engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+4, "One Player");
-
-			menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
-			engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+5, "Two Players");
-		}
-		else
-		{
-		    menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
-		    engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+4, "One Player");
-		    
-		    menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
-		    engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+5, "Two Players");
-		}
-		    
-
-		// Draw the level numbers
-		menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
-		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+7, "Starting speed:");
-
-		// Draw the options with the right colors
-		for (i = 0, j = 0; i < 9; i++)
-		{
-		    if (i == (current_speed-1))
-				menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
-			else
-				menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
-				
-			mvprintw(MENUTEXTSTARTY+7, option_row_pos+j, "%c", speed_options[i]);	
-			j += 2;
-		}
-
-		
-		engineAddStr(MENUBOXSTARTX+1, MENUBOXSTARTY+11, "Use --help for guidelines");
-
-		wait = menuGetInput(&current_speed);
-    	refresh ();
-	}
-
-	game.difficulty = current_speed;
-	
-	//Turns off all attributes
-	standend();
-	
-	if (gamemode == ONE_PLAYER) SinglePlayerGame();
-	//else if (gamemode == BOT_VS_BOT) BotAgainstBot();
-	else TwoPlayerGame();
+    	while (wait == TRUE)
+    	{
+    		// Draw the borders
+    		menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
+    		for (i = 0; i < SCREENWIDTH; i++)
+    		{
+    			engineAddChar(i, 0, MENUBORDER);
+    			engineAddChar(i ,SCREENHEIGHT - 1, MENUBORDER);
+    		}
+    		for (i = 0; i < SCREENHEIGHT; i++)
+    		{
+    			engineAddChar (0, i, MENUBORDER);
+    			engineAddChar (SCREENWIDTH - 1, i, MENUBORDER);
+    		}
+    		menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
+    		engineAddStr(MENUBOXSTARTX, MENUBOXSTARTY, " ___________________________________________________ ");
+    		
+    		for(i=MENUBOXSTARTY+1 ; i<=MENUBOXSTARTY+11 ; i++){
+    		    engineAddStr(MENUBOXSTARTX, i, "|                                                   |");
+    		} 
+    		    
+    		engineAddStr(MENUBOXSTARTX, MENUBOXSTARTY+12, "|___________________________________________________|");
+    
+    		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY, "Press <enter> or <space> to start game");
+    
+    		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+1, "Press <q> to quit game");
+    
+    		// Draw the game mode
+    		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+3, "Game Mode:");
+    		if (gamemode == ONE_PLAYER)
+    		{
+    			menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
+    			engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+4, "One Player");
+    
+    			menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
+    			engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+5, "Two Players");
+    		}
+    		else
+    		{
+    		    menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
+    		    engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+4, "One Player");
+    		    
+    		    menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
+    		    engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+5, "Two Players");
+    		}
+    		    
+    
+    		// Draw the level numbers
+    		menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
+    		engineAddStr(MENUTEXTSTARTX, MENUTEXTSTARTY+7, "Starting speed:");
+    
+    		// Draw the options with the right colors
+    		for (i = 0, j = 0; i < 9; i++)
+    		{
+    		    if (i == (current_speed-1))
+    				menuStartAtrribute (COLOR_PAIR (WHITE_BLACK));
+    			else
+    				menuStartAtrribute (COLOR_PAIR (BLUE_BLACK));
+    				
+    			mvprintw(MENUTEXTSTARTY+7, option_row_pos+j, "%c", speed_options[i]);	
+    			j += 2;
+    		}
+    
+    		
+    		engineAddStr(MENUBOXSTARTX+1, MENUBOXSTARTY+11, "Use --help for guidelines");
+    
+    		wait = menuGetInput(&current_speed);
+        	refresh ();
+    	}
+    
+    	game.difficulty = current_speed;
+    	game.state = GAME;
+    	//Turns off all attributes
+    	standend();
+    	
+    	
+    	while (gamemode == ONE_PLAYER && game.state == GAME)    SinglePlayerGame();
+    	//else if (gamemode == BOT_VS_BOT) BotAgainstBot();
+    	while (gamemode == TWO_PLAYERS && game.state == GAME)     TwoPlayerGame();
+    }
 }
 
 
@@ -192,35 +197,42 @@ void menuEndGame()
 	int c;
 
 	engineStartMenuEnvironment();	//set delay for menu
-			
+	game.state = END_MENU;		
+	
 	menuEndPrint(highlight);
 	while(1)
-	{	c = getch();
+	{	
+	    c = getch();
 		switch(c)
-		{	case KEY_UP:
-				if(highlight == 1)
-					highlight = ENDCHOICES;
-				else
-					--highlight;
+		{	
+		    case KEY_UP:
+				if(highlight == QUITTOMENU)
+					highlight = RESTART;
 				break;
 			case KEY_DOWN:
-				if(highlight == ENDCHOICES)
-					highlight = 1;
-				else 
-					++highlight;
+				if(highlight == RESTART)
+					highlight = QUITTOMENU;
 				break;
 			case 10:
 				choice = highlight;
 				break;
 			default:
 				refresh();
-				break;
+				//break;
 		}
 		menuEndPrint(highlight);
-		if(choice != 0)	/* User did a choice come out of the infinite loop */
+		if(choice == 1){	    /* Player chose to restart*/
+		    game.state = GAME;
 			//Turn off all attributes
 			standend();
 			break;
+	    }
+	    else if(choice == 2){
+	        game.state = MAIN_MENU;
+	        //Turn off all attributes
+			standend();
+	        break;
+	    }
 	}	
 
 	refresh();

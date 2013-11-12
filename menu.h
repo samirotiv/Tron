@@ -18,6 +18,8 @@
 #define ENDBOXENDX (ENDBOXSTARTX + ENDBOXWIDTH -1)
 #define ENDBOXENDY (ENDBOXSTARTY + ENDBOXHEIGHT)
 
+#define RESTART 1
+#define QUITTOMENU 2
 void menuMainMenu();
 int menuGetInput(int* );
 void menuStartAtrribute (int );
