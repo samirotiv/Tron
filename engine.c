@@ -44,9 +44,9 @@ void engineInit(){
 	start_color();
 	
 
-	if ((current_width < SCREENWIDTH) || (current_height < SCREENHEIGHT)){
+	if ((current_width < SCREENWIDTH) || (current_height < SCREENHEIGHT) || (SCREENHEIGHT < 24) || (SCREENWIDTH < 80)){
         endwin();
-        printf ("Your console screen is smaller than %d x %d\nPlease resize your window and try again\n\n", SCREENWIDTH, SCREENHEIGHT);
+        printf ("Your console screen is smaller than %d x %d\nPlease resize your window and try again\nPlease note, the set SCREENWIDTH and SCREENHEIGHT in engine.h must be greater than 24x80\n", SCREENWIDTH, SCREENHEIGHT);
         exit(0);
     }
     
