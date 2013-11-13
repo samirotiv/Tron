@@ -195,8 +195,8 @@ void SinglePlayerGame(){
             snakeUpdateDirection(snake1, new_direction);
         }
         
-        snakeElongate (snake1);
         snakeElongate (snake2);
+        snakeElongate (snake1);
         
         refresh();
     }
