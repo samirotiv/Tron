@@ -248,7 +248,7 @@ int aiVoronoi(struct future* FGptr){
                 if (FGptr->usrdistancemap[x][y] > FGptr->botdistancemap[x][y]) result += 10;
                 if (FGptr->usrdistancemap[x][y] < FGptr->botdistancemap[x][y]) result -= 10;
                 result += (FGptr->usrdistancemap[x][y]) / 30;
-                result -= (FGptr->botdistancemap[x][y]) / 40;
+                result -= (FGptr->botdistancemap[x][y]) / 30;
             }
         }
     }
