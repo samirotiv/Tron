@@ -5,7 +5,7 @@ A C implementation of the infamous Tron game.
 
 We (Samir Otiv, Kaushik Garikipati & Ramya TR) created this to learn a few new things - Minimax, Alpha-Beta Pruning, Ncurses & POSIX Threads.
 
-###Features
+### Features
 1. An implementation of the Minimax Algorithm - optimized with Alpha-Beta Pruning.
 2. An intelligent heuristic - a few funtions applied onto the game's Voronoi Diagram.
 3. An implementation of Dijkstra's Algorithm for square grids.
@@ -16,20 +16,20 @@ We (Samir Otiv, Kaushik Garikipati & Ramya TR) created this to learn a few new t
 8. Terminal based colored UI using Curses.
 
 
-###Get Tron
-####To build from source
+### Get Tron
+#### To build from source
 Either clone the repo, or just download the zip using the link on the right. 
 
 If you're on a UNIX or Linux, ensure you have the developer's libraries for Ncurses installed (ncurses-dev). Then switch to the project folder and run the 'make' command.
 
 If you're running Windows, you'd probably want to use MinGW. Ensure you install PDCurses and Pthreads. Then just run the 'make.bat' script in the project folder.
 
-####Prebuilt Executables
+#### Prebuilt Executables
 [Download Tron For Windows 1.0](https://github.com/samirotiv/Tron/releases/download/1.0/TronForWindows1.0.zip)
 (See [Releases](https://github.com/samirotiv/Tron/releases/))
 
 
 
-###Dependencies
+### Dependencies
 1. Pthreads
 2. Ncurses
